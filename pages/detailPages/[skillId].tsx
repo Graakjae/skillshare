@@ -1,13 +1,15 @@
-import { doc, getDoc } from "firebase/firestore";
+import { doc, getDoc, onSnapshot } from "firebase/firestore";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import styled from "styled-components";
-import { skillsRef } from "../../firebase-config";
+import { skillsRef, usersRef } from "../../firebase-config";
 import { Skill } from "../../models/Skill";
+import { User } from "../../models/User";
 
 const SkillDetailsPage: NextPage = () => {
   const [skill, setSkill] = useState<Skill>();
+  const [users, setUsers] = useState<Users>();
 
   const router = useRouter();
   const { skillId } = router.query;
@@ -26,10 +28,30 @@ const SkillDetailsPage: NextPage = () => {
     fetchSkills();
   }, []);
 
+  useEffect(() => {
+    const unsubscribe = onSnapshot(usersRef, (data) => {
+      const favData = data.docs.map((doc) => {
+        return { ...doc.data(), id: doc.id };
+      });
+      console.log(favData);
+      setUsers(favData);
+    });
+    return () => unsubscribe();
+  }, []);
+
   return (
     <div>
       <H1>{skill?.name}</H1>
       <Image src={skill?.image} alt={skill?.name} />
+
+      <H2>Users with this skill</H2>
+      {users
+        ?.filter((user: User) =>
+          user?.skills?.primarySkills.includes(skill?.name)
+        )
+        .map((filteredSkills: Skill) => (
+          <p key={users}>{filteredSkills.name}</p>
+        ))}
     </div>
   );
 };
@@ -56,12 +78,10 @@ const Description = styled.div({
 
 const H1 = styled.h1({
   fontSize: "40px",
-  textAlign: "center",
   marginBottom: "60px",
 });
 
 const H2 = styled.h2({
-  fontSize: "30px",
   textAlign: "center",
 });
 

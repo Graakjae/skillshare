@@ -5,8 +5,9 @@ import styled from "styled-components";
 import { onSnapshot } from "firebase/firestore";
 import { Skill } from "../../models/Skill";
 import { Project } from "../../models/Project";
+import { NextPage } from "next";
 
-export default function NewUser({}) {
+const NewUser: NextPage = () => {
   const [name, setName] = useState("");
   const [title, setTitle] = useState("");
   const [skills, setSkills] = useState([]);
@@ -67,13 +68,13 @@ export default function NewUser({}) {
     return () => unsubscribe();
   }, []);
 
-  function handleImageChange(event: any) {
-    const file = event?.target?.files[0];
+  function handleImageChange(e: any) {
+    const file = e?.target?.files[0];
     if (file.size < 500000) {
       // image file size must be below 0,5MB
       const reader = new FileReader();
-      reader.onload = (event) => {
-        setImage(event?.target?.result);
+      reader.onload = (e: any) => {
+        setImage(e?.target?.result);
       };
       reader.readAsDataURL(file);
       setErrorMessage(""); // reset errorMessage state
@@ -92,7 +93,7 @@ export default function NewUser({}) {
   return (
     <section>
       <form onSubmit={handleSubmit}>
-        New user
+        <H1>New user</H1>
         <label>
           Name
           <input type="text" onChange={(e) => setName(e.target.value)} />
@@ -174,6 +175,9 @@ export default function NewUser({}) {
       </form>
     </section>
   );
-}
+};
+
+export default NewUser;
 
 const SkillImg = styled.img({});
+const H1 = styled.h1({});

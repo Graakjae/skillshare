@@ -3,8 +3,9 @@ import { useEffect, useState } from "react";
 import { skillsRef } from "../../firebase-config";
 import Image from "next/image";
 import styled from "styled-components";
+import { NextPage } from "next";
 
-export default function NewSkill({}) {
+const NewSkill: NextPage = () => {
   const [name, setName] = useState("");
 
   const [errorMessage, setErrorMessage] = useState("");
@@ -16,19 +17,18 @@ export default function NewSkill({}) {
     const newSkillList = {
       name: name,
       image: image,
-      id: `ucb-${Date.now()}`,
     };
 
     await addDoc(skillsRef, newSkillList);
   }
 
-  function handleImageChange(event: any) {
-    const file = event?.target?.files[0];
+  function handleImageChange(e: any) {
+    const file = e?.target?.files[0];
     if (file.size < 500000) {
       // image file size must be below 0,5MB
       const reader = new FileReader();
-      reader.onload = (event: any) => {
-        setImage(event?.target?.result);
+      reader.onload = (e: any) => {
+        setImage(e?.target?.result);
       };
       reader.readAsDataURL(file);
       setErrorMessage(""); // reset errorMessage state
@@ -47,7 +47,7 @@ export default function NewSkill({}) {
     <section>
       <form onSubmit={handleSubmit}>
         <label>
-          New skill
+          <H1>New skill</H1>
           <input type="text" onChange={(e) => setName(e.target.value)} />
         </label>
         <label>
@@ -66,6 +66,10 @@ export default function NewSkill({}) {
       </form>
     </section>
   );
-}
+};
+
+export default NewSkill;
 
 const SkillImg = styled.img({});
+
+const H1 = styled.h1({});

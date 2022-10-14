@@ -1,13 +1,16 @@
-import { doc, getDoc } from "firebase/firestore";
+import { doc, getDoc, onSnapshot } from "firebase/firestore";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import styled from "styled-components";
-import { projectsRef } from "../../firebase-config";
+import { projectsRef, usersRef } from "../../firebase-config";
 import { Project } from "../../models/Project";
+import { Skill } from "../../models/Skill";
+import { User } from "../../models/User";
 
 const ProjectDetailsPage: NextPage = () => {
   const [project, setProject] = useState<Project>();
+  const [users, setUsers] = useState<Users>();
 
   const router = useRouter();
   const { projectId } = router.query;
@@ -26,10 +29,28 @@ const ProjectDetailsPage: NextPage = () => {
     fetchData();
   }, []);
 
+  useEffect(() => {
+    const unsubscribe = onSnapshot(usersRef, (data) => {
+      const favData = data.docs.map((doc) => {
+        return { ...doc.data(), id: doc.id };
+      });
+      console.log(favData);
+      setUsers(favData);
+    });
+    return () => unsubscribe();
+  }, []);
+
   return (
     <div>
       <H1>{project?.name}</H1>
       <Image src={project?.image} alt={project?.name} />
+      {users
+        ?.filter((user: User) =>
+          user?.projects?.mainProjects.includes(project?.name)
+        )
+        .map((filteredSkills: Skill) => (
+          <p key={users}>{filteredSkills.name}</p>
+        ))}
     </div>
   );
 };

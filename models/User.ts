@@ -7,8 +7,8 @@ export type User = {
     secondarySkills: string;
   };
   projects: {
-    mainProjects: string;
-    assistedProjects: string;
+    mainProjects: string[];
+    assistedProjects: string[];
   };
   experience: string;
   location: string;
