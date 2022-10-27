@@ -1,22 +1,25 @@
 import { doc, getDoc, onSnapshot } from "firebase/firestore";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { Key, useEffect, useState } from "react";
 import styled from "styled-components";
 import { projectsRef, usersRef } from "../../firebase-config";
 import { Project } from "../../models/Project";
 import { Skill } from "../../models/Skill";
 import { User } from "../../models/User";
+import Image from "next/image";
+import PreviousPageArrow from "../../components/PreviousPageArrow";
 
 const ProjectDetailsPage: NextPage = () => {
   const [project, setProject] = useState<Project>();
-  const [users, setUsers] = useState<Users>();
+  const [users, setUsers] = useState<User[]>();
 
   const router = useRouter();
   const { projectId } = router.query;
 
   useEffect(() => {
     const fetchData = async () => {
+      if (!projectId) return;
       try {
         {
           const docRef = doc(projectsRef, projectId);
@@ -27,7 +30,7 @@ const ProjectDetailsPage: NextPage = () => {
       } catch (error) {}
     };
     fetchData();
-  }, []);
+  }, [projectId]);
 
   useEffect(() => {
     const unsubscribe = onSnapshot(usersRef, (data) => {
@@ -42,14 +45,47 @@ const ProjectDetailsPage: NextPage = () => {
 
   return (
     <div>
-      <H1>{project?.name}</H1>
-      <Image src={project?.image} alt={project?.name} />
+      <PreviousPageArrow />
+
+      <H2>{project?.name}</H2>
+      <ProjectImage src={project?.image} alt={project?.name} />
+      <H3>Project team</H3>
       {users
         ?.filter((user: User) =>
-          user?.projects?.mainProjects.includes(project?.name)
+          user?.projects?.mainProjects.some((p) => p.name === project?.name)
         )
-        .map((filteredSkills: Skill) => (
-          <p key={users}>{filteredSkills.name}</p>
+        .map((filteredUsers: User, key: Key) => (
+          <UsersWrapper
+            key={key}
+            onClick={() => router.push(`/detailPages2/${filteredUsers?.id}`)}
+          >
+            <p>{filteredUsers.name}</p>
+            <Image
+              src={filteredUsers?.image}
+              alt={filteredUsers?.name}
+              width={"20px"}
+              height={"20px"}
+            />
+          </UsersWrapper>
+        ))}
+      <H3>Assisted on the project</H3>
+      {users
+        ?.filter((user: User) =>
+          user?.projects?.assistedProjects.some((p) => p.name === project?.name)
+        )
+        .map((filteredUsers: User, key: Key) => (
+          <UsersWrapper
+            key={key}
+            onClick={() => router.push(`/detailPages2/${filteredUsers?.id}`)}
+          >
+            <p>{filteredUsers.name}</p>
+            <Image
+              src={filteredUsers?.image}
+              alt={filteredUsers?.name}
+              width={"20px"}
+              height={"20px"}
+            />
+          </UsersWrapper>
         ))}
     </div>
   );
@@ -57,7 +93,7 @@ const ProjectDetailsPage: NextPage = () => {
 
 export default ProjectDetailsPage;
 
-const Image = styled.img({
+const ProjectImage = styled.img({
   height: "100px",
 });
 
@@ -68,22 +104,16 @@ const Detail = styled.div({
   columnGap: "40px",
 });
 
-const Description = styled.div({
+const UsersWrapper = styled.div({
+  display: "flex",
   fontSize: "17px",
-  width: "70%",
-  borderRadius: "20px",
-  border: "1px solid black",
-});
-
-const H1 = styled.h1({
-  fontSize: "40px",
-  textAlign: "center",
-  marginBottom: "60px",
 });
 
 const H2 = styled.h2({
-  fontSize: "30px",
-  textAlign: "center",
+  textAlign: "left",
+});
+const H3 = styled.h2({
+  textAlign: "left",
 });
 
 const Highlighted = styled.p({

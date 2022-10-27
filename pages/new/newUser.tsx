@@ -6,17 +6,19 @@ import { onSnapshot } from "firebase/firestore";
 import { Skill } from "../../models/Skill";
 import { Project } from "../../models/Project";
 import { NextPage } from "next";
+import { locations } from "../../lib/helpers/locations";
+import Multiselect from "multiselect-react-dropdown";
 
 const NewUser: NextPage = () => {
   const [name, setName] = useState("");
   const [title, setTitle] = useState("");
-  const [skills, setSkills] = useState([]);
-  const [primarySkills, setPrimarySkills] = useState("");
-  const [secondarySkills, setSecondarySkills] = useState("");
-  const [projects, setProjects] = useState([]);
-  const [mainProjects, setMainProjects] = useState("");
-  const [assistedProjects, setAssistedProjects] = useState("");
-  const [experience, setExperience] = useState("");
+  const [skills, setSkills] = useState<Skill>();
+  const [primarySkills, setPrimarySkills] = useState([]);
+  const [secondarySkills, setSecondarySkills] = useState([]);
+  const [projects, setProjects] = useState<Project>();
+  const [mainProjects, setMainProjects] = useState([]);
+  const [assistedProjects, setAssistedProjects] = useState([]);
+  const [experience, setExperience] = useState(0);
   const [location, setLocation] = useState("");
   const [image, setImage] = useState("");
   const [slack, setSlack] = useState("");
@@ -84,12 +86,6 @@ const NewUser: NextPage = () => {
     }
   }
 
-  //   function handleActivitiesChange(selectedOptions) {
-  //     console.log(`Option selected:`, selectedOptions);
-  //     setSelectedAktiviteter(selectedOptions);
-  //   }
-  const locations = ["Aarhus", "Copenhagen"];
-
   return (
     <section>
       <form onSubmit={handleSubmit}>
@@ -108,47 +104,39 @@ const NewUser: NextPage = () => {
         </label>
         <label>
           Primary skills
-          <select onChange={(e) => setPrimarySkills(e.target.value)}>
-            <option>Primary skills</option>
-            {skills.map((skill: Skill) => (
-              <option value={skill.name} key={skill.name}>
-                {skill.name}
-              </option>
-            ))}
-          </select>
+          <Multiselect
+            options={skills} // Options to display in the dropdown
+            onSelect={setPrimarySkills} // Function will trigger on select event
+            displayValue="name" // Property name to display in the dropdown options
+            showCheckbox
+          />
         </label>
         <label>
           Secondary skills
-          <select onChange={(e) => setSecondarySkills(e.target.value)}>
-            <option>Secondary skills</option>
-            {skills.map((skill: Skill) => (
-              <option value={skill.name} key={skill.name}>
-                {skill.name}
-              </option>
-            ))}
-          </select>
+          <Multiselect
+            options={skills} // Options to display in the dropdown
+            onSelect={setSecondarySkills} // Function will trigger on select event
+            displayValue="name" // Property name to display in the dropdown options
+            showCheckbox
+          />
         </label>
         <label>
           Main projects
-          <select onChange={(e) => setMainProjects(e.target.value)}>
-            <option>Main projects</option>
-            {projects.map((project: Project) => (
-              <option value={project.name} key={project.name}>
-                {project.name}
-              </option>
-            ))}
-          </select>
+          <Multiselect
+            options={projects} // Options to display in the dropdown
+            onSelect={setMainProjects} // Function will trigger on select event
+            displayValue="name" // Property name to display in the dropdown options
+            showCheckbox
+          />
         </label>
         <label>
           Assisted projects
-          <select onChange={(e) => setAssistedProjects(e.target.value)}>
-            <option>Assisted projects</option>
-            {projects.map((project: Project) => (
-              <option value={project.name} key={project.name}>
-                {project.name}
-              </option>
-            ))}
-          </select>
+          <Multiselect
+            options={projects} // Options to display in the dropdown
+            onSelect={setAssistedProjects} // Function will trigger on select event
+            displayValue="name" // Property name to display in the dropdown options
+            showCheckbox
+          />
         </label>
         <label>
           Location

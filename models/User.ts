@@ -1,16 +1,19 @@
+import { Project } from "./Project";
+import { Skill } from "./Skill";
+
 export type User = {
   name: string;
   id: string;
   title: string;
   skills: {
-    primarySkills: string;
-    secondarySkills: string;
+    primarySkills: Skill[];
+    secondarySkills: Skill[];
   };
   projects: {
-    mainProjects: string[];
-    assistedProjects: string[];
+    mainProjects: Project[];
+    assistedProjects: Project[];
   };
-  experience: string;
+  experience: number;
   location: string;
   image: string;
   slack: string;

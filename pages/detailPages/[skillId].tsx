@@ -1,64 +1,86 @@
-import { doc, getDoc, onSnapshot } from "firebase/firestore";
+import { deleteDoc, doc, getDoc, onSnapshot } from "firebase/firestore";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { Key, useEffect, useState } from "react";
 import styled from "styled-components";
 import { skillsRef, usersRef } from "../../firebase-config";
 import { Skill } from "../../models/Skill";
 import { User } from "../../models/User";
+import PreviousPageArrow from "../../components/PreviousPageArrow";
 
 const SkillDetailsPage: NextPage = () => {
   const [skill, setSkill] = useState<Skill>();
-  const [users, setUsers] = useState<Users>();
+  const [users, setUsers] = useState<User[]>();
 
   const router = useRouter();
   const { skillId } = router.query;
 
   useEffect(() => {
     const fetchSkills = async () => {
+      if (!skillId) return;
       try {
         {
           const docRef = doc(skillsRef, skillId);
           const docData = await getDoc(docRef);
           setSkill(docData.data());
-          console.log(skill);
         }
-      } catch (error) {}
+      } catch (error) {
+        console.log(error);
+      }
     };
     fetchSkills();
-  }, []);
+  }, [skillId]);
 
   useEffect(() => {
     const unsubscribe = onSnapshot(usersRef, (data) => {
       const favData = data.docs.map((doc) => {
         return { ...doc.data(), id: doc.id };
       });
-      console.log(favData);
       setUsers(favData);
     });
     return () => unsubscribe();
   }, []);
 
+  async function deleteSkill() {
+    const confirmDelete = window.confirm(
+      `Are you sure you want delete ${skill?.name}?`
+    );
+    if (confirmDelete) {
+      const docRef = doc(skillsRef, skillId);
+      deleteDoc(docRef);
+      router.push("/skills");
+    }
+  }
+
+  console.log("brugere", users);
+
   return (
     <div>
-      <H1>{skill?.name}</H1>
-      <Image src={skill?.image} alt={skill?.name} />
+      <PreviousPageArrow />
+      <H2>{skill?.name}</H2>
+      <SkillImage src={skill?.image} alt={skill?.name} />
 
-      <H2>Users with this skill</H2>
+      <H3>Users with this skill</H3>
       {users
         ?.filter((user: User) =>
-          user?.skills?.primarySkills.includes(skill?.name)
+          user?.skills?.primarySkills?.some((s) => s.name === skill?.name)
         )
-        .map((filteredSkills: Skill) => (
-          <p key={users}>{filteredSkills.name}</p>
+        .map((filteredUsers: User, key: Key) => (
+          <p
+            key={key}
+            onClick={() => router.push(`/detailPages2/${filteredUsers?.id}`)}
+          >
+            {filteredUsers.name}
+          </p>
         ))}
+      <button onClick={deleteSkill}>Remove skill</button>
     </div>
   );
 };
 
 export default SkillDetailsPage;
 
-const Image = styled.img({
+const SkillImage = styled.img({
   height: "100px",
 });
 
@@ -76,13 +98,11 @@ const Description = styled.div({
   border: "1px solid black",
 });
 
-const H1 = styled.h1({
-  fontSize: "40px",
-  marginBottom: "60px",
-});
-
 const H2 = styled.h2({
-  textAlign: "center",
+  textAlign: "left",
+});
+const H3 = styled.h2({
+  textAlign: "left",
 });
 
 const Highlighted = styled.p({
