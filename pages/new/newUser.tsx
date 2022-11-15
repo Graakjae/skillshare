@@ -7,15 +7,17 @@ import { Skill } from "../../models/Skill";
 import { Project } from "../../models/Project";
 import { NextPage } from "next";
 import { locations } from "../../lib/helpers/locations";
-import Multiselect from "multiselect-react-dropdown";
+import { useRouter } from "next/router";
+import "./styles/multiselect.module.css";
+import Select from "react-select";
 
 const NewUser: NextPage = () => {
   const [name, setName] = useState("");
   const [title, setTitle] = useState("");
-  const [skills, setSkills] = useState<Skill>();
+  const [skills, setSkills] = useState<Skill[]>();
   const [primarySkills, setPrimarySkills] = useState([]);
   const [secondarySkills, setSecondarySkills] = useState([]);
-  const [projects, setProjects] = useState<Project>();
+  const [projects, setProjects] = useState<Project[]>();
   const [mainProjects, setMainProjects] = useState([]);
   const [assistedProjects, setAssistedProjects] = useState([]);
   const [experience, setExperience] = useState(0);
@@ -23,6 +25,8 @@ const NewUser: NextPage = () => {
   const [image, setImage] = useState("");
   const [slack, setSlack] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+
+  const router = useRouter();
 
   async function handleSubmit(event: any) {
     event.preventDefault();
@@ -86,60 +90,76 @@ const NewUser: NextPage = () => {
     }
   }
 
+  let skillOptions: any = [];
+
+  skills?.map((skill: Skill) => {
+    skillOptions.push({ value: skill.label, label: skill.label });
+  });
+
+  let projectOptions: any = [];
+
+  projects?.map((project: Project) => {
+    projectOptions.push({ value: project.label, label: project.label });
+  });
+
   return (
-    <section>
-      <form onSubmit={handleSubmit}>
+    <Form onSubmit={handleSubmit}>
+      <div>
         <H1>New user</H1>
-        <label>
-          Name
-          <input type="text" onChange={(e) => setName(e.target.value)} />
-        </label>
-        <label>
-          Title
-          <input type="text" onChange={(e) => setTitle(e.target.value)} />
-        </label>
-        <label>
-          Experience
-          <input type="text" onChange={(e) => setExperience(e.target.value)} />
-        </label>
-        <label>
-          Primary skills
-          <Multiselect
-            options={skills} // Options to display in the dropdown
-            onSelect={setPrimarySkills} // Function will trigger on select event
-            displayValue="name" // Property name to display in the dropdown options
-            showCheckbox
+        <InputWrapper>
+          <H3>Name</H3>
+          <Input2 type="text" onChange={(e) => setName(e.target.value)} />
+        </InputWrapper>
+        <InputWrapper>
+          <H3>Title</H3>
+          <Input2 type="text" onChange={(e) => setTitle(e.target.value)} />
+        </InputWrapper>
+        <InputWrapper>
+          <H3>Experience</H3>
+          <Input2 type="text" onChange={(e) => setExperience(e.target.value)} />
+        </InputWrapper>
+        <InputWrapper>
+          <H3>Primary skills</H3>
+          <Select
+            isSearchable={true}
+            isMulti={true}
+            defaultValue={null}
+            onChange={setPrimarySkills}
+            options={skillOptions}
           />
-        </label>
-        <label>
-          Secondary skills
-          <Multiselect
-            options={skills} // Options to display in the dropdown
-            onSelect={setSecondarySkills} // Function will trigger on select event
-            displayValue="name" // Property name to display in the dropdown options
-            showCheckbox
+        </InputWrapper>
+        <InputWrapper>
+          <H3>Secondary skills</H3>
+          <Select
+            isSearchable={true}
+            isMulti={true}
+            defaultValue={null}
+            onChange={setSecondarySkills}
+            options={skillOptions}
           />
-        </label>
-        <label>
-          Main projects
-          <Multiselect
-            options={projects} // Options to display in the dropdown
-            onSelect={setMainProjects} // Function will trigger on select event
-            displayValue="name" // Property name to display in the dropdown options
-            showCheckbox
+        </InputWrapper>
+        <InputWrapper>
+          <H3>Main projects</H3>
+          <Select
+            isSearchable={true}
+            isMulti={true}
+            defaultValue={null}
+            onChange={setMainProjects}
+            options={projectOptions}
           />
-        </label>
-        <label>
-          Assisted projects
-          <Multiselect
-            options={projects} // Options to display in the dropdown
-            onSelect={setAssistedProjects} // Function will trigger on select event
-            displayValue="name" // Property name to display in the dropdown options
-            showCheckbox
+        </InputWrapper>
+        <InputWrapper>
+          <H3>Assisting projects</H3>
+          <Select
+            isSearchable={true}
+            isMulti={true}
+            defaultValue={null}
+            onChange={setAssistedProjects}
+            options={projectOptions}
           />
-        </label>
-        <label>
-          Location
+        </InputWrapper>
+        <InputWrapper>
+          <H3>Location</H3>
           <select onChange={(e) => setLocation(e.target.value)}>
             <option>Location</option>
             {locations.map((location) => (
@@ -148,24 +168,75 @@ const NewUser: NextPage = () => {
               </option>
             ))}
           </select>
-        </label>
-        <label>
-          Choose a image for your skill
+        </InputWrapper>
+        <InputWrapper>
+          <H3>Choose a profilepicture</H3>
           <input type="file" accept="image/*" onChange={handleImageChange} />
-          <SkillImg
+          <UserImg
             src={image}
             alt="Placeholder image"
             // onError={(e: any) => (e.target.src = "placeholderImage.jpg")}
           />
           <p>{errorMessage}</p>
-        </label>
-        <button type="submit">Create user</button>
-      </form>
-    </section>
+        </InputWrapper>
+        <Button type="submit">Create user</Button>
+      </div>
+    </Form>
   );
 };
 
 export default NewUser;
 
-const SkillImg = styled.img({});
-const H1 = styled.h1({});
+const Flex = styled.div({
+  display: "flex",
+  ["img"]: {
+    position: "relative",
+  },
+});
+const UserImg = styled.img({
+  width: "100px",
+});
+const H1 = styled.h1({
+  textAlign: "center",
+});
+
+const H3 = styled.h3({
+  marginBlockStart: "1em",
+  marginBlockEnd: "0.1em",
+});
+
+const Input2 = styled.input({
+  width: "100%",
+  height: "50px",
+  border: "none",
+  fontSize: "20px",
+});
+
+const InputWrapper = styled.div({
+  width: "80%",
+  display: "block",
+  margin: "auto",
+  ["div"]: {
+    border: "none",
+    backgroundColor: "white",
+    height: "50px",
+  },
+});
+
+const Form = styled.form({});
+
+const Button = styled.button({
+  width: "260px",
+  height: "60px",
+  backgroundColor: "black",
+  color: "white",
+  fontSize: "25px",
+  border: "none",
+  transition: "1s all ease",
+  display: "block",
+  margin: "auto",
+  ["&:hover"]: {
+    backgroundColor: "#FFEC3F",
+    color: "black",
+  },
+});

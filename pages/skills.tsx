@@ -7,20 +7,28 @@ import Link from "next/link";
 import { skillsRef } from "../firebase-config";
 import { Skill } from "../models/Skill";
 import { Input } from "../components/input/input";
+import LoadingSpinner from "../components/loadingSpinner/loadingSpinner";
 
 const Skills: NextPage = () => {
   const router = useRouter();
 
   const [skills, setSkills] = useState<Skill[]>([]);
   const [query, setQuery] = useState("");
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const unsubscribe = onSnapshot(skillsRef, (data) => {
-      const favData = data.docs.map((doc) => {
-        return { ...doc.data(), id: doc.id };
-      });
-      console.log(favData);
-      setSkills(favData);
+      try {
+        const favData = data.docs.map((doc) => {
+          return { ...doc.data(), id: doc.id };
+        });
+        console.log(favData);
+        setSkills(favData);
+      } catch (e) {
+        console.log(e);
+      } finally {
+        setLoading(false);
+      }
     });
     return () => unsubscribe();
   }, []);
@@ -36,7 +44,7 @@ const Skills: NextPage = () => {
               if (query === "") {
                 return skill;
               } else if (
-                skill.name.toLowerCase().includes(query.toLowerCase())
+                skill.label.toLowerCase().includes(query.toLowerCase())
               ) {
                 return skill;
               }
@@ -46,11 +54,13 @@ const Skills: NextPage = () => {
                 key={key}
                 onClick={() => router.push(`/detailPages/${skill.id}`)}
               >
-                <PWrapper>{skill.name}</PWrapper>
-                <Image src={skill?.image} alt={skill?.name} />
+                <Image src={skill?.image} alt={skill?.label} />
+
+                <H2>{skill.label}</H2>
               </Column>
             ))}
         </Grid>
+        {loading && <LoadingSpinner />}
       </main>
     </div>
   );
@@ -58,9 +68,9 @@ const Skills: NextPage = () => {
 
 export default Skills;
 
-const PWrapper = styled.p({
+const H2 = styled.h2({
   textAlign: "center",
-  fontSize: "15px",
+  fontSize: "20px",
   cursor: "pointer",
 });
 

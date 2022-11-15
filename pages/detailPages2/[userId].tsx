@@ -1,4 +1,4 @@
-import { doc, getDoc, onSnapshot } from "firebase/firestore";
+import { deleteDoc, doc, getDoc, onSnapshot } from "firebase/firestore";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
 import { Key, useEffect, useState } from "react";
@@ -8,6 +8,7 @@ import { Project } from "../../models/Project";
 import { Skill } from "../../models/Skill";
 import { User } from "../../models/User";
 import PreviousPageArrow from "../../components/PreviousPageArrow";
+import LoadingSpinner from "../../components/loadingSpinner/loadingSpinner";
 
 const UserDetailsPage: NextPage = () => {
   const [user, setUser] = useState<User>();
@@ -15,6 +16,7 @@ const UserDetailsPage: NextPage = () => {
   const [projects, setProjects] = useState<Project[]>();
   const router = useRouter();
   const { userId } = router.query;
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -28,7 +30,10 @@ const UserDetailsPage: NextPage = () => {
           setUser(docData.data());
           console.log(user);
         }
-      } catch (error) {}
+      } catch (error) {
+      } finally {
+        setLoading(false);
+      }
     };
     fetchUsers();
   }, [userId]);
@@ -55,82 +60,136 @@ const UserDetailsPage: NextPage = () => {
     return () => unsubscribe();
   }, []);
 
+  async function deleteUser() {
+    const confirmDelete = window.confirm(
+      `Are you sure you want delete ${user?.name}?`
+    );
+    if (confirmDelete) {
+      const docRef = doc(usersRef, userId);
+      deleteDoc(docRef);
+      router.push("/users");
+    }
+  }
+
   return (
     <div>
-      <PreviousPageArrow />
-      <p>{user?.name}</p>
-      <p>{user?.title}</p>
-      <p>{user?.experience}</p>
-      <p>{user?.slack}</p>
-
-      <h3>Main Projects</h3>
-      {user?.projects?.mainProjects?.map((mainProject: Project, key: Key) => (
-        <p
-          key={key}
-          onClick={() => router.push(`/detailPages/${mainProject?.id}`)}
-        >
-          {mainProject.name}
-        </p>
-      ))}
-      <h3>Assisted projects</h3>
-      {user?.projects?.assistedProjects?.map(
-        (assistedProject: Project, key: Key) => (
-          <p
-            key={key}
-            onClick={() => router.push(`/detailPages/${assistedProject?.id}`)}
-          >
-            {assistedProject.name}
-          </p>
-        )
+      {loading && (
+        <LoadingSpinnerWrapper>
+          <LoadingSpinner />
+        </LoadingSpinnerWrapper>
       )}
 
-      <h3>Primary skills</h3>
-      {user?.skills?.primarySkills?.map((primarySkill: Skill, key: Key) => (
-        <p
-          key={key}
-          onClick={() => router.push(`/detailPages/${primarySkill?.id}`)}
-        >
-          {primarySkill.name}
-        </p>
-      ))}
-
-      <h3>Secondary skills</h3>
-      {user?.skills?.secondarySkills?.map((secondarySkill: Skill, key: Key) => (
-        <p
-          key={key}
-          onClick={() => router.push(`/detailPages/${secondarySkill?.id}`)}
-        >
-          {secondarySkill?.name}
-        </p>
-      ))}
-      <h3>Location</h3>
-      <p>{user?.location}</p>
-      <h3>Slack me!</h3>
-      <p>{user?.slack}</p>
-      <h3>Thats me</h3>
-      <UserImage src={user?.image} alt={user?.name} />
+      {loading ? null : (
+        <div>
+          <UserCenter>
+            <div>
+              {/* <PreviousPageArrow /> */}
+              <UserWrapper>
+                <UserImage src={user?.image} alt={user?.name} />
+                <UserInformation>
+                  <UserInformation2>
+                    <H2>{user?.name}</H2>
+                    <p>{user?.title}</p>
+                    <p>Experience: {user?.experience}</p>
+                    <p>Location: {user?.location}</p>
+                    <p>Slack me! {user?.slack}</p>
+                  </UserInformation2>
+                </UserInformation>
+              </UserWrapper>
+              <Center>
+                <SkillsProjectsWrapper>
+                  <Category>
+                    <H3>Primary skills</H3>
+                    {user?.skills?.primarySkills?.map(
+                      (primarySkill: Skill, key: Key) => (
+                        <P
+                          key={key}
+                          onClick={() =>
+                            router.push(`/detailPages/${primarySkill?.id}`)
+                          }
+                        >
+                          {primarySkill.label}
+                        </P>
+                      )
+                    )}
+                  </Category>
+                  <Category>
+                    <H3>Secondary skills</H3>
+                    {user?.skills?.secondarySkills?.map(
+                      (secondarySkill: Skill, key: Key) => (
+                        <P
+                          key={key}
+                          onClick={() =>
+                            router.push(`/detailPages/${secondarySkill?.id}`)
+                          }
+                        >
+                          {secondarySkill?.label}
+                        </P>
+                      )
+                    )}
+                  </Category>
+                  <Line></Line>
+                  <Category>
+                    <H3>Main Projects</H3>
+                    {user?.projects?.mainProjects?.map(
+                      (mainProject: Project, key: Key) => (
+                        <P
+                          key={key}
+                          onClick={() =>
+                            router.push(`/detailPages/${mainProject?.id}`)
+                          }
+                        >
+                          {mainProject.name}
+                        </P>
+                      )
+                    )}
+                  </Category>
+                  <Category>
+                    <H3>Assisted projects</H3>
+                    {user?.projects?.assistedProjects?.map(
+                      (assistedProject: Project, key: Key) => (
+                        <P
+                          key={key}
+                          onClick={() =>
+                            router.push(`/detailPages/${assistedProject?.id}`)
+                          }
+                        >
+                          {assistedProject.name}
+                        </P>
+                      )
+                    )}
+                  </Category>
+                </SkillsProjectsWrapper>
+              </Center>
+            </div>
+          </UserCenter>
+          <button onClick={deleteUser}>Remove user</button>
+        </div>
+      )}
     </div>
   );
 };
 
 export default UserDetailsPage;
 
-const UserImage = styled.img({
-  height: "100px",
+const LoadingSpinnerWrapper = styled.div({
+  marginTop: "120px",
 });
 
-const Detail = styled.div({
+const UserCenter = styled.div({
+  marginTop: "50px",
+  justifyContent: "center",
   display: "flex",
-  width: "70%",
-  margin: "auto",
-  columnGap: "40px",
+  alignItems: "center",
 });
 
-const Description = styled.div({
-  fontSize: "17px",
-  width: "70%",
-  borderRadius: "20px",
-  border: "1px solid black",
+const Center = styled.div({
+  justifyContent: "center",
+  display: "flex",
+});
+
+const UserImage = styled.img({
+  width: "40%",
 });
 
 const H1 = styled.h1({
@@ -139,22 +198,62 @@ const H1 = styled.h1({
   marginBottom: "60px",
 });
 
-const H2 = styled.h2({
-  fontSize: "30px",
-  textAlign: "center",
-});
-
 const Highlighted = styled.p({
   fontSize: "20px",
   fontWeight: "700",
 });
 
-const Width = styled.div({
-  width: "80%",
-  margin: "auto",
+const P = styled.p({
+  cursor: "pointer",
 });
 
-const Center = styled.button({
-  margin: "auto",
-  display: "block",
+const SkillsProjectsWrapper = styled.div({
+  width: "80%",
+  marginTop: "30px",
+  display: "flex",
+  justifyContent: "space-between",
+  borderTop: "1px solid black",
+});
+
+const UserWrapper = styled.div({
+  display: "flex",
+  justifyContent: "center",
+  gap: "20px",
+  width: "100%",
+});
+
+const LocationDiv = styled.div({
+  display: "flex",
+  gap: "10px",
+});
+
+const UserInformation = styled.div({
+  borderLeft: "5px solid #FFEC3F",
+  borderTop: "1px solid #CCCCCC",
+  borderBottom: "1px solid #CCCCCC",
+  width: "40%",
+  boxShadow: "0 0px 2px 0 rgba(0, 0, 0, 0.25);",
+});
+
+const UserInformation2 = styled.div({
+  padding: "5px 5px 5px 10px",
+});
+
+const Category = styled.div({});
+
+const H3 = styled.h3({
+  fontSize: "22px",
+  marginBlockStart: "0.8em",
+  marginBlockEnd: "0.5em",
+});
+
+const H2 = styled.h2({
+  fontSize: "40px",
+  marginBlockStart: "0.2em",
+  marginBlockEnd: "0.5em",
+});
+
+const Line = styled.div({
+  borderLeft: "1px solid black",
+  marginBlockStart: "0.8em",
 });

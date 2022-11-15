@@ -4,18 +4,23 @@ import { skillsRef } from "../../firebase-config";
 import Image from "next/image";
 import styled from "styled-components";
 import { NextPage } from "next";
+import { useRouter } from "next/router";
 
 const NewSkill: NextPage = () => {
-  const [name, setName] = useState("");
+  const [value, setValue] = useState("");
+  const [label, setLabel] = useState("");
 
   const [errorMessage, setErrorMessage] = useState("");
   const [image, setImage] = useState("");
+
+  const router = useRouter();
 
   async function handleSubmit(event: any) {
     event.preventDefault();
 
     const newSkillList = {
-      name: name,
+      value: value,
+      label: label,
       image: image,
     };
 
@@ -46,10 +51,12 @@ const NewSkill: NextPage = () => {
   return (
     <section>
       <form onSubmit={handleSubmit}>
+        <H1>New skill</H1>
         <label>
-          <H1>New skill</H1>
-          <input type="text" onChange={(e) => setName(e.target.value)} />
+          <h3>Skillname</h3>
+          <input type="text" onChange={(e) => setLabel(e.target.value)} />
         </label>
+
         <label>
           Choose a image for your skill
           <input type="file" accept="image/*" onChange={handleImageChange} />
@@ -62,7 +69,9 @@ const NewSkill: NextPage = () => {
           <p>{errorMessage}</p>
         </label>
 
-        <button type="submit">Create skill</button>
+        <button type="submit" onClick={() => router.push("/skills")}>
+          Create skill
+        </button>
       </form>
     </section>
   );

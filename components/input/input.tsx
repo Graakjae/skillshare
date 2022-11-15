@@ -63,7 +63,7 @@ const StyledInput = styled.input({
   fontSize: "16px",
   border: "none",
   outline: "none",
-  backgroundColor: "transparent",
+  backgroundColor: "white",
   ["&::placeholder"]: {
     color: colors.base.grey500,
   },
@@ -88,6 +88,7 @@ const InputWrapper = styled.div<{
   disabled?: boolean;
   statusColor?: Status;
 }>(({ borderColor, disabled }) => ({
+  backgroundColor: "white",
   width: "50%",
   position: "relative",
   display: "flex",

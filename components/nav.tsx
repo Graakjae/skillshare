@@ -18,7 +18,7 @@ const Nav: NextComponentType = ({}) => {
       <HeaderStyle className={styles.topnav}>
         <Link href="/users">
           <L className={router.pathname == "/users" ? styles.active : ""}>
-            Users
+            USERS
             <div
               className={router.pathname == "/users" ? styles.underline : ""}
             ></div>
@@ -27,7 +27,7 @@ const Nav: NextComponentType = ({}) => {
 
         <Link href="/skills">
           <L className={router.pathname == "/skills" ? styles.active : ""}>
-            Skills
+            SKILLS
             <div
               className={router.pathname == "/skills" ? styles.underline : ""}
             ></div>
@@ -36,7 +36,7 @@ const Nav: NextComponentType = ({}) => {
 
         <Link href="/projects">
           <L className={router.pathname == "/projects" ? styles.active : ""}>
-            Projects
+            PROJECTS
             <div
               className={router.pathname == "/projects" ? styles.underline : ""}
             ></div>
@@ -58,14 +58,22 @@ const HeaderStyle = styled.div({
   justifyContent: "center",
   textAlign: "center",
   position: "relative",
+  padding: "5px",
 });
 
-const NavWrapper = styled.div({
-  justifyContent: "center",
-});
+const NavWrapper = styled.div({});
 
 const L = styled.a({
   cursor: "pointer",
   position: "relative",
   margin: "0 30px 0 30px",
+  backgroundImage: "linear-gradient(#FEFF00,#FEFF00)",
+  backgroundSize: "0 40%",
+  backgroundRepeat: "no-repeat",
+  backgroundPosition: "0 95%",
+  transition: "all 0.5s ease",
+  ["&:hover"]: {
+    backgroundImage: "linear-gradient(#FEFF00,#FEFF00)",
+    backgroundSize: "100% 40%",
+  },
 });

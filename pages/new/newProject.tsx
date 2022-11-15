@@ -1,5 +1,6 @@
 import { addDoc } from "@firebase/firestore";
 import { NextPage } from "next";
+import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import styled from "styled-components";
 import { AddImage } from "../../components/addImage";
@@ -8,11 +9,13 @@ import { projectsRef } from "../../firebase-config";
 const NewProject: NextPage = () => {
   const [name, setName] = useState("");
 
+  const router = useRouter();
+
   async function handleSubmit(event) {
     event.preventDefault();
 
     const newProjectList = {
-      name: name,
+      label: name,
       id: `ucb-${Date.now()}`,
     };
 
@@ -48,7 +51,9 @@ const NewProject: NextPage = () => {
           <input type="text" onChange={(e) => setName(e.target.value)} />
         </label>
         <AddImage />
-        <button type="submit">Opret Project</button>
+        <button type="submit" onClick={() => router.push("/projects")}>
+          Opret Project
+        </button>
       </form>
     </section>
   );

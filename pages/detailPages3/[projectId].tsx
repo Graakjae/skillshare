@@ -9,6 +9,7 @@ import { Skill } from "../../models/Skill";
 import { User } from "../../models/User";
 import Image from "next/image";
 import PreviousPageArrow from "../../components/PreviousPageArrow";
+import LoadingSpinner from "../../components/loadingSpinner/loadingSpinner";
 
 const ProjectDetailsPage: NextPage = () => {
   const [project, setProject] = useState<Project>();
@@ -16,6 +17,7 @@ const ProjectDetailsPage: NextPage = () => {
 
   const router = useRouter();
   const { projectId } = router.query;
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -27,7 +29,10 @@ const ProjectDetailsPage: NextPage = () => {
           setProject(docData.data());
           console.log(project);
         }
-      } catch (error) {}
+      } catch (error) {
+      } finally {
+        setLoading(false);
+      }
     };
     fetchData();
   }, [projectId]);
@@ -46,47 +51,67 @@ const ProjectDetailsPage: NextPage = () => {
   return (
     <div>
       <PreviousPageArrow />
+      {loading && (
+        <LoadingSpinnerWrapper>
+          <LoadingSpinner />
+        </LoadingSpinnerWrapper>
+      )}
+      {loading ? null : (
+        <div>
+          <H2>{project?.name}</H2>
+          <ProjectImage src={project?.image} alt={project?.name} />
 
-      <H2>{project?.name}</H2>
-      <ProjectImage src={project?.image} alt={project?.name} />
-      <H3>Project team</H3>
-      {users
-        ?.filter((user: User) =>
-          user?.projects?.mainProjects.some((p) => p.name === project?.name)
-        )
-        .map((filteredUsers: User, key: Key) => (
-          <UsersWrapper
-            key={key}
-            onClick={() => router.push(`/detailPages2/${filteredUsers?.id}`)}
-          >
-            <p>{filteredUsers.name}</p>
-            <Image
-              src={filteredUsers?.image}
-              alt={filteredUsers?.name}
-              width={"20px"}
-              height={"20px"}
-            />
-          </UsersWrapper>
-        ))}
-      <H3>Assisted on the project</H3>
-      {users
-        ?.filter((user: User) =>
-          user?.projects?.assistedProjects.some((p) => p.name === project?.name)
-        )
-        .map((filteredUsers: User, key: Key) => (
-          <UsersWrapper
-            key={key}
-            onClick={() => router.push(`/detailPages2/${filteredUsers?.id}`)}
-          >
-            <p>{filteredUsers.name}</p>
-            <Image
-              src={filteredUsers?.image}
-              alt={filteredUsers?.name}
-              width={"20px"}
-              height={"20px"}
-            />
-          </UsersWrapper>
-        ))}
+          <Wrapper>
+            <UsersWrapper>
+              <H3>Project team</H3>
+              {users
+                ?.filter((user: User) =>
+                  user?.projects?.mainProjects.some(
+                    (p) => p.name === project?.name
+                  )
+                )
+                .map((filteredUsers: User, key: Key) => (
+                  <Flex
+                    key={key}
+                    onClick={() =>
+                      router.push(`/detailPages2/${filteredUsers?.id}`)
+                    }
+                  >
+                    <p>{filteredUsers.name}</p>
+                    <UserImages
+                      src={filteredUsers?.image}
+                      alt={filteredUsers?.name}
+                    />
+                  </Flex>
+                ))}
+            </UsersWrapper>
+
+            <UsersWrapper>
+              <H3>Assisted on the project</H3>
+              {users
+                ?.filter((user: User) =>
+                  user?.projects?.assistedProjects.some(
+                    (p) => p.name === project?.name
+                  )
+                )
+                .map((filteredUsers: User, key: Key) => (
+                  <Flex
+                    key={key}
+                    onClick={() =>
+                      router.push(`/detailPages2/${filteredUsers?.id}`)
+                    }
+                  >
+                    <p>{filteredUsers.name}</p>
+                    <UserImages
+                      src={filteredUsers?.image}
+                      alt={filteredUsers?.name}
+                    />
+                  </Flex>
+                ))}
+            </UsersWrapper>
+          </Wrapper>
+        </div>
+      )}
     </div>
   );
 };
@@ -94,19 +119,22 @@ const ProjectDetailsPage: NextPage = () => {
 export default ProjectDetailsPage;
 
 const ProjectImage = styled.img({
-  height: "100px",
+  width: "100px",
 });
 
-const Detail = styled.div({
+const UserImages = styled.img({
+  width: "50px",
+  borderRadius: "50px",
+});
+
+const Wrapper = styled.div({
   display: "flex",
-  width: "70%",
-  margin: "auto",
-  columnGap: "40px",
+  gap: "20px",
+  justifyContent: "center",
 });
 
 const UsersWrapper = styled.div({
-  display: "flex",
-  fontSize: "17px",
+  border: "1px solid black",
 });
 
 const H2 = styled.h2({
@@ -129,4 +157,13 @@ const Width = styled.div({
 const Center = styled.button({
   margin: "auto",
   display: "block",
+});
+
+const Flex = styled.div({
+  display: "flex",
+  padding: "10px 0px 10px 0px",
+});
+
+const LoadingSpinnerWrapper = styled.div({
+  marginTop: "120px",
 });
