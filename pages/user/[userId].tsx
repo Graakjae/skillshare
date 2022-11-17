@@ -11,7 +11,7 @@ import PreviousPageArrow from "../../components/PreviousPageArrow";
 import LoadingSpinner from "../../components/loadingSpinner/loadingSpinner";
 
 const UserDetailsPage: NextPage = () => {
-  const [user, setUser] = useState<User>();
+  const [user, setUser] = useState<User | undefined>();
   const [skills, setSkills] = useState<Skill[]>();
   const [projects, setProjects] = useState<Project[]>();
   const router = useRouter();
@@ -28,7 +28,6 @@ const UserDetailsPage: NextPage = () => {
           console.log(docData.data());
 
           setUser(docData.data());
-          console.log(user);
         }
       } catch (error) {
       } finally {
@@ -91,7 +90,7 @@ const UserDetailsPage: NextPage = () => {
                     <H2>{user?.name}</H2>
                     <p>{user?.title}</p>
                     <p>Experience: {user?.experience}</p>
-                    <p>Location: {user?.location}</p>
+                    <p>Location: {user?.location.label}</p>
                     <p>Slack me! {user?.slack}</p>
                   </UserInformation2>
                 </UserInformation>
@@ -136,10 +135,10 @@ const UserDetailsPage: NextPage = () => {
                         <P
                           key={key}
                           onClick={() =>
-                            router.push(`/detailPages/${mainProject?.id}`)
+                            router.push(`/project/${mainProject?.id}`)
                           }
                         >
-                          {mainProject.name}
+                          {mainProject.label}
                         </P>
                       )
                     )}
@@ -151,10 +150,10 @@ const UserDetailsPage: NextPage = () => {
                         <P
                           key={key}
                           onClick={() =>
-                            router.push(`/detailPages/${assistedProject?.id}`)
+                            router.push(`/project/${assistedProject?.id}`)
                           }
                         >
-                          {assistedProject.name}
+                          {assistedProject.label}
                         </P>
                       )
                     )}
@@ -163,7 +162,7 @@ const UserDetailsPage: NextPage = () => {
               </Center>
             </div>
           </UserCenter>
-          <button onClick={deleteUser}>Remove user</button>
+          <button onClick={deleteUser}>Delete user</button>
         </div>
       )}
     </div>

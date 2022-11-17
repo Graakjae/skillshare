@@ -14,7 +14,10 @@ export type User = {
     assistedProjects: Project[];
   };
   experience: number;
-  location: string;
+  location: {
+    label: string;
+    value: number;
+  };
   image: string;
   slack: string;
 };

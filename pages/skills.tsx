@@ -20,9 +20,12 @@ const Skills: NextPage = () => {
     const unsubscribe = onSnapshot(skillsRef, (data) => {
       try {
         const favData = data.docs.map((doc) => {
-          return { ...doc.data(), id: doc.id };
+          return {
+            ...doc.data(),
+            id: doc.id,
+          };
         });
-        console.log(favData);
+        console.log("favData", favData);
         setSkills(favData);
       } catch (e) {
         console.log(e);
@@ -52,11 +55,10 @@ const Skills: NextPage = () => {
             .map((skill, key) => (
               <Column
                 key={key}
-                onClick={() => router.push(`/detailPages/${skill.id}`)}
+                onClick={() => router.push(`/skill/${skill.id}`)}
               >
                 <Image src={skill?.image} alt={skill?.label} />
-
-                <H2>{skill.label}</H2>
+                <H3>{skill.label}</H3>
               </Column>
             ))}
         </Grid>
@@ -68,7 +70,7 @@ const Skills: NextPage = () => {
 
 export default Skills;
 
-const H2 = styled.h2({
+const H3 = styled.h3({
   textAlign: "center",
   fontSize: "20px",
   cursor: "pointer",

@@ -7,7 +7,6 @@ import { NextPage } from "next";
 import { useRouter } from "next/router";
 
 const NewSkill: NextPage = () => {
-  const [value, setValue] = useState("");
   const [label, setLabel] = useState("");
 
   const [errorMessage, setErrorMessage] = useState("");
@@ -19,9 +18,9 @@ const NewSkill: NextPage = () => {
     event.preventDefault();
 
     const newSkillList = {
-      value: value,
       label: label,
       image: image,
+      id: `ucb-${Date.now()}`,
     };
 
     await addDoc(skillsRef, newSkillList);

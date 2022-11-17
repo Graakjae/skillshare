@@ -1,6 +1,5 @@
 import type { NextPage } from "next";
-import Head from "next/head";
-import { FC, Key, useEffect, useState } from "react";
+import { Key, useEffect, useState } from "react";
 import styled from "styled-components";
 import { useRouter } from "next/router";
 import { onSnapshot } from "firebase/firestore";
@@ -54,9 +53,10 @@ const Projects: NextPage = () => {
             .map((project, key: Key) => (
               <Column
                 key={key}
-                onClick={() => router.push(`/detailPages3/${project.id}`)}
+                onClick={() => router.push(`/project/${project.id}`)}
               >
-                <PWrapper>{project.label}</PWrapper>
+                <Image src={project?.image} alt={project?.label} />
+                <Name>{project.label}</Name>
               </Column>
             ))}
         </Grid>
@@ -69,22 +69,16 @@ const Projects: NextPage = () => {
 
 export default Projects;
 
-const PWrapper = styled.p({
+const Name = styled.h3({
   textAlign: "center",
-  fontSize: "15px",
+  fontSize: "20px",
   cursor: "pointer",
+  marginBlockStart: "0em",
+  marginBlockEnd: "0em",
 });
 
-const Header = styled.h1({
-  textAlign: "center",
-  fontSize: "30px",
-  width: "100%",
-});
-
-const H2 = styled.h2({
-  textAlign: "center",
-  fontSize: "30px",
-  width: "100%",
+const Image = styled.img({
+  width: "60px",
 });
 
 const Grid = styled.div({

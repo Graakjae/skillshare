@@ -8,7 +8,6 @@ import { Project } from "../../models/Project";
 import { NextPage } from "next";
 import { locations } from "../../lib/helpers/locations";
 import { useRouter } from "next/router";
-import "./styles/multiselect.module.css";
 import Select from "react-select";
 
 const NewUser: NextPage = () => {
@@ -160,15 +159,15 @@ const NewUser: NextPage = () => {
         </InputWrapper>
         <InputWrapper>
           <H3>Location</H3>
-          <select onChange={(e) => setLocation(e.target.value)}>
-            <option>Location</option>
-            {locations.map((location) => (
-              <option value={location} key={location}>
-                {location}
-              </option>
-            ))}
-          </select>
+          <Select
+            isSearchable={true}
+            isMulti={false}
+            defaultValue={null}
+            onChange={setLocation}
+            options={locations}
+          />
         </InputWrapper>
+
         <InputWrapper>
           <H3>Choose a profilepicture</H3>
           <input type="file" accept="image/*" onChange={handleImageChange} />
@@ -179,7 +178,9 @@ const NewUser: NextPage = () => {
           />
           <p>{errorMessage}</p>
         </InputWrapper>
-        <Button type="submit">Create user</Button>
+        <Button type="submit" onClick={() => router.push("/users")}>
+          Create user
+        </Button>
       </div>
     </Form>
   );
@@ -187,12 +188,6 @@ const NewUser: NextPage = () => {
 
 export default NewUser;
 
-const Flex = styled.div({
-  display: "flex",
-  ["img"]: {
-    position: "relative",
-  },
-});
 const UserImg = styled.img({
   width: "100px",
 });
@@ -218,9 +213,13 @@ const InputWrapper = styled.div({
   margin: "auto",
   ["div"]: {
     border: "none",
-    backgroundColor: "white",
-    height: "50px",
   },
+});
+
+const LocationSelect = styled.select({
+  width: "100%",
+  border: "none",
+  backgroundColor: "white",
 });
 
 const Form = styled.form({});

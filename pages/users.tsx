@@ -1,5 +1,5 @@
 import type { NextPage } from "next";
-import { useEffect, useMemo, useState } from "react";
+import { Key, useEffect, useMemo, useState } from "react";
 import styled from "styled-components";
 import { useRouter } from "next/router";
 import { onSnapshot } from "firebase/firestore";
@@ -14,6 +14,7 @@ import filter from "../icons/Union.svg";
 import { colors } from "../util/colorPalette";
 import LoadingSpinner from "../components/loadingSpinner/loadingSpinner";
 import Image from "next/image";
+import { mq } from "../media-query";
 
 const Users: NextPage = () => {
   const router = useRouter();
@@ -52,7 +53,7 @@ const Users: NextPage = () => {
   var filteredList = useMemo(getFilteredList, [selectedCategory, users]);
   console.log(filteredList);
 
-  function handleCategoryChange(event) {
+  function handleCategoryChange(event: any) {
     if (event.target.checked) {
       setSelectedCategory(event.target.value);
       console.log("event", event.target.value);
@@ -83,12 +84,12 @@ const Users: NextPage = () => {
                 <Image src={filter} alt="Filter" width={30} height={30} />
               </FilterText>
               <h3>Locations</h3>
-              {locations.map((location) => (
-                <Checkbox key={location}>
-                  <p>{location}</p>
+              {locations.map((location, key: Key) => (
+                <Checkbox key={key}>
+                  <p>{location.label}</p>
                   <input
                     type={"checkbox"}
-                    value={location}
+                    value={location.label}
                     onChange={handleCategoryChange}
                   />
                 </Checkbox>
@@ -109,10 +110,7 @@ const Users: NextPage = () => {
               }
             })
             .map((user, key) => (
-              <Column
-                key={key}
-                onClick={() => router.push(`/detailPages2/${user.id}`)}
-              >
+              <Column key={key} onClick={() => router.push(`/user/${user.id}`)}>
                 <ImageDiv>
                   <UserImage
                     src={user?.image}
@@ -134,6 +132,7 @@ const Users: NextPage = () => {
 export default Users;
 
 const UserImage = styled.img({
+  width: "200px",
   height: "200px",
   borderRadius: "5px",
   transition: "0.5s all ease-in-out",
@@ -162,12 +161,6 @@ const Title = styled.p({
   marginBlockEnd: "1em",
 });
 
-const Header = styled.h1({
-  textAlign: "center",
-  fontSize: "30px",
-  width: "100%",
-});
-
 const H2 = styled.h2({
   textAlign: "center",
   fontSize: "30px",
@@ -181,21 +174,19 @@ const Grid = styled.div({
   display: "grid",
   columnGap: "0px",
   rowGap: "30px",
-  marginBottom: "50px",
-  gridTemplateColumns: "repeat(3, 1fr)",
-});
-
-const Img = styled.img({
-  height: "120px",
-  justifyContent: "center",
+  gridTemplateColumns: "repeat(1, 1fr)",
+  [mq("md")]: {
+    gridTemplateColumns: "repeat(2, 1fr)",
+  },
+  [mq("lg")]: {
+    gridTemplateColumns: "repeat(3, 1fr)",
+  },
 });
 
 const Column = styled.div({
-  width: "75%",
+  width: "80%",
   maxWidth: "300px",
-  height: "230px",
   borderRadius: "5px",
-  // boxShadow: "0 0px 10px 0 rgba(0, 0, 0, 0.25);",
   display: "flex",
   flexDirection: "column",
   alignItems: "center",
@@ -219,8 +210,6 @@ const Column = styled.div({
   // },
 });
 
-const SearchBar = styled.input({});
-
 const Filter = styled.div({
   position: "absolute",
   border: "1px solid black",
@@ -232,6 +221,10 @@ const Filter = styled.div({
 
 const Center = styled.div({
   width: "80%",
+  ["h3"]: {
+    marginBlockStart: "1em",
+    marginBlockEnd: "0.1em",
+  },
 });
 
 const FilterText = styled.div({
@@ -243,4 +236,8 @@ const Checkbox = styled.div({
   display: "flex",
   justifyContent: "space-between",
   alignItems: "center",
+  ["p"]: {
+    marginBlockStart: "0.2em",
+    marginBlockEnd: "0.2em",
+  },
 });
