@@ -8,6 +8,7 @@ import { skillsRef } from "../firebase-config";
 import { Skill } from "../models/Skill";
 import { Input } from "../components/input/input";
 import LoadingSpinner from "../components/loadingSpinner/loadingSpinner";
+import { mq } from "../media-query";
 
 const Skills: NextPage = () => {
   const router = useRouter();
@@ -23,7 +24,7 @@ const Skills: NextPage = () => {
           return {
             ...doc.data(),
             id: doc.id,
-          };
+          } as Skill;
         });
         console.log("favData", favData);
         setSkills(favData);
@@ -40,7 +41,6 @@ const Skills: NextPage = () => {
     <div>
       <main>
         <Input onChange={(event) => setQuery(event.target.value)} />
-        <Link href="/new/newSkill">Add new skill here ++</Link>
         <Grid>
           {skills
             .filter((skill) => {
@@ -74,19 +74,18 @@ const H3 = styled.h3({
   textAlign: "center",
   fontSize: "20px",
   cursor: "pointer",
-});
-
-const Header = styled.h1({
-  textAlign: "center",
-  fontSize: "30px",
-  width: "100%",
+  position: "absolute",
+  bottom: "0%",
+  marginBlockEnd: "0.5em",
 });
 
 const Image = styled.img({
-  width: "60px",
+  width: "100px",
+  marginBottom: "30px",
 });
 
 const Grid = styled.div({
+  maxWidth: "1000px",
   width: "60%",
   justifyItems: "center",
   margin: "auto",
@@ -94,22 +93,43 @@ const Grid = styled.div({
   columnGap: "0px",
   rowGap: "30px",
   marginBottom: "50px",
-  gridTemplateColumns: "repeat(5, 1fr)",
+  marginTop: "30px",
+  gridTemplateColumns: "repeat(3, 1fr)",
+  [mq("md")]: {
+    gridTemplateColumns: "repeat(4, 1fr)",
+  },
+  [mq("lg")]: {
+    gridTemplateColumns: "repeat(5, 1fr)",
+  },
 });
 
 const Column = styled.div({
-  width: "75%",
+  width: "130px",
+  height: "158px",
   maxWidth: "300px",
-
   borderRadius: "5px",
-  // boxShadow: "0 0px 10px 0 rgba(0, 0, 0, 0.25);",
+  boxShadow: "0 0px 10px 0 rgba(0, 0, 0, 0.25);",
   display: "flex",
   flexDirection: "column",
   alignItems: "center",
+  justifyContent: "center",
   cursor: "pointer",
-  // "&:hover": {
-  //   backgroundColor: "#f28e1c",
-  // },
+  position: "relative",
+  transition: "0.5s all ease-in-out",
+
+  ["&:hover"]: {
+    backgroundImage: "linear-gradient(#FEFF00,#FEFF00)",
+    backgroundSize: "0%",
+    transform: "scale(1.1)",
+
+    ["h3"]: {
+      backgroundImage: "linear-gradient(#FEFF00,#FEFF00)",
+      backgroundSize: "100% 40%",
+      transition: "all 0.5s ease",
+      backgroundPosition: "0 95%",
+      backgroundRepeat: "no-repeat",
+    },
+  },
 });
 
 const SearchBar = styled.input({});

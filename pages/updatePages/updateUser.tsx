@@ -97,21 +97,13 @@ const NewUser: NextPage = () => {
   let skillOptions: any = [];
 
   skills?.map((skill: Skill) => {
-    skillOptions.push({
-      value: skill.label,
-      label: skill.label,
-      id: skill.id,
-    });
+    skillOptions.push({ value: skill.label, label: skill.label });
   });
 
   let projectOptions: any = [];
 
   projects?.map((project: Project) => {
-    projectOptions.push({
-      value: project.label,
-      label: project.label,
-      id: project.id,
-    });
+    projectOptions.push({ value: project.label, label: project.label });
   });
 
   return (

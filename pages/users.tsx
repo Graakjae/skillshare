@@ -30,7 +30,7 @@ const Users: NextPage = () => {
     const unsubscribe = onSnapshot(usersRef, (data) => {
       try {
         const favData = data.docs.map((doc) => {
-          return { ...doc.data(), id: doc.id };
+          return { ...doc.data(), id: doc.id } as User;
         });
         console.log(favData);
         setUsers(favData);
@@ -47,7 +47,7 @@ const Users: NextPage = () => {
     if (!selectedCategory) {
       return users;
     }
-    return users.filter((user) => user.location === selectedCategory);
+    return users.filter((user) => user.location.label === selectedCategory);
   }
 
   var filteredList = useMemo(getFilteredList, [selectedCategory, users]);
@@ -75,8 +75,6 @@ const Users: NextPage = () => {
       <main>
         <div>
           <Input onChange={(event) => setQuery(event.target.value)} />
-          <Link href="/new/newUser">Add new user here ++</Link>
-
           <Filter>
             <Center>
               <FilterText>
@@ -132,8 +130,8 @@ const Users: NextPage = () => {
 export default Users;
 
 const UserImage = styled.img({
-  width: "200px",
-  height: "200px",
+  width: "250px",
+  height: "250px",
   borderRadius: "5px",
   transition: "0.5s all ease-in-out",
   ["&:hover"]: {
@@ -168,11 +166,13 @@ const H2 = styled.h2({
 });
 
 const Grid = styled.div({
+  maxWidth: "1000px",
   width: "60%",
   justifyItems: "center",
   margin: "auto",
   display: "grid",
-  columnGap: "0px",
+  columnGap: "10px",
+  marginTop: "30px",
   rowGap: "30px",
   gridTemplateColumns: "repeat(1, 1fr)",
   [mq("md")]: {
@@ -184,8 +184,7 @@ const Grid = styled.div({
 });
 
 const Column = styled.div({
-  width: "80%",
-  maxWidth: "300px",
+  width: "100%",
   borderRadius: "5px",
   display: "flex",
   flexDirection: "column",

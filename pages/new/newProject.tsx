@@ -25,18 +25,18 @@ const NewProject: NextPage = () => {
     await addDoc(projectsRef, newProjectList);
   }
 
-  function handleImageChange(e: ChangeEvent<HTMLInputElement>) {
-    if (!e.target.files) {
+  function handleImageChange(event: ChangeEvent<HTMLInputElement>) {
+    if (!event.target.files) {
       setErrorMessage("Image input is invalid");
       return;
     }
 
-    const file = e.target.files[0];
+    const file = event.target.files[0];
     if (file.size < 500000) {
       // image file size must be below 0,5MB
       const reader = new FileReader();
-      reader.onload = (e) => {
-        setImage(e.target?.result as string);
+      reader.onload = (event) => {
+        setImage(event.target?.result as string);
       };
       reader.readAsDataURL(file);
       setErrorMessage(""); // reset errorMessage state

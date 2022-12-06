@@ -15,9 +15,9 @@
     content: '';
     width: 100%;
     position: absolute;
-    top: 15px;
+    top: 13px;
     left: 0;
-    height: 6px;
-    background: #FFEC3F;
+    height: 10px;
+    background: #FEFF00;
     z-index: -1;
 } 

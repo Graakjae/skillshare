@@ -89,14 +89,14 @@ const InputWrapper = styled.div<{
   statusColor?: Status;
 }>(({ borderColor, disabled }) => ({
   backgroundColor: "white",
-  width: "50%",
+  width: "40%",
+  maxWidth: "600px",
   position: "relative",
   display: "flex",
   borderRadius: "5px",
   height: "20px",
   padding: "14px 16px",
   marginTop: "8px",
-  //   border: "1px solid black",
   boxSizing: "content-box",
   boxShadow: "0 0px 10px 0 rgba(0, 0, 0, 0.25);",
   ["&:focus"]: {

@@ -8,6 +8,9 @@ import { Project } from "../../models/Project";
 import { User } from "../../models/User";
 import PreviousPageArrow from "../../components/PreviousPageArrow";
 import LoadingSpinner from "../../components/loadingSpinner/loadingSpinner";
+import Link from "next/link";
+import Image from "next/image";
+import updateIcon from "../../icons/updateIcon.png";
 
 const ProjectDetailsPage: NextPage = () => {
   const [project, setProject] = useState<Project>();
@@ -17,13 +20,18 @@ const ProjectDetailsPage: NextPage = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    console.log(projectId);
+
     const fetchData = async () => {
       if (!projectId) return;
+      console.log(projectId);
+
       try {
         {
+          // @ts-ignore disable-next-line
           const docRef = doc(projectsRef, projectId);
           const docData = await getDoc(docRef);
-          setProject(docData.data());
+          setProject(docData.data() as Project);
         }
       } catch (error) {
       } finally {
@@ -36,7 +44,7 @@ const ProjectDetailsPage: NextPage = () => {
   useEffect(() => {
     const unsubscribe = onSnapshot(usersRef, (data) => {
       const favData = data.docs.map((doc) => {
-        return { ...doc.data(), id: doc.id };
+        return { ...doc.data(), id: doc.id } as User;
       });
       console.log(favData);
       setUsers(favData);
@@ -49,6 +57,7 @@ const ProjectDetailsPage: NextPage = () => {
       `Are you sure you want delete ${project?.label}?`
     );
     if (confirmDelete) {
+      // @ts-ignore disable-next-line
       const docRef = doc(projectsRef, projectId);
       deleteDoc(docRef);
       router.push("/projects");
@@ -67,7 +76,24 @@ const ProjectDetailsPage: NextPage = () => {
         <div>
           <Center>
             <Card>
-              <H2>{project?.label}</H2>
+              <NameWrapper>
+                <H2>{project?.label}</H2>
+                <div
+                  style={{
+                    position: "relative",
+                    width: "30px",
+                    marginBlockStart: "0.5em",
+                    marginBlockEnd: "0.5em",
+                    cursor: "pointer",
+                  }}
+                >
+                  <Image
+                    src={updateIcon}
+                    alt="Update icon"
+                    onClick={() => router.push(`/updateProject/${projectId}`)}
+                  />
+                </div>
+              </NameWrapper>
               <ProjectImage src={project?.image} alt={project?.label} />
             </Card>
           </Center>
@@ -90,7 +116,7 @@ const ProjectDetailsPage: NextPage = () => {
                         src={filteredUsers?.image}
                         alt={filteredUsers?.name}
                       />
-                      <p>{filteredUsers.name}</p>
+                      <Name>{filteredUsers.name}</Name>
                     </Flex>
                   ))}
               </UsersWrapper>
@@ -112,13 +138,16 @@ const ProjectDetailsPage: NextPage = () => {
                         src={filteredUsers?.image}
                         alt={filteredUsers?.name}
                       />
-                      <p>{filteredUsers.name}</p>
+                      <Name>{filteredUsers.name}</Name>
                     </Flex>
                   ))}
               </UsersWrapper>
             </Wrapper>
           </Center>
           <button onClick={deleteProject}>Delete project</button>
+          <button onClick={() => router.push(`/updateProject/${projectId}`)}>
+            Update
+          </button>
         </div>
       )}
     </div>
@@ -128,7 +157,8 @@ const ProjectDetailsPage: NextPage = () => {
 export default ProjectDetailsPage;
 
 const ProjectImage = styled.img({
-  width: "100px",
+  maxHeight: "100px",
+  maxWidth: "200px",
 });
 
 const UserImages = styled.img({
@@ -158,16 +188,6 @@ const H3 = styled.h2({
   marginBlockEnd: "0.5em",
 });
 
-const Highlighted = styled.p({
-  fontSize: "20px",
-  fontWeight: "700",
-});
-
-const Width = styled.div({
-  width: "80%",
-  margin: "auto",
-});
-
 const Center = styled.div({
   justifyContent: "center",
   display: "flex",
@@ -176,6 +196,12 @@ const Center = styled.div({
 const Flex = styled.div({
   display: "flex",
   padding: "10px 0px 10px 0px",
+});
+
+const Name = styled.p({
+  justifyContent: "center",
+  alignItems: "center",
+  display: "flex",
 });
 
 const LoadingSpinnerWrapper = styled.div({
@@ -190,10 +216,18 @@ const Card = styled.div({
   boxShadow: "0 0px 2px 0 rgba(0, 0, 0, 0.25);",
   display: "flex",
   justifyContent: "space-between",
+  alignItems: "center",
   padding: "20px",
 });
 
 const Line = styled.div({
   borderLeft: "1px solid black",
   marginBlockStart: "0.8em",
+});
+
+const NameWrapper = styled.div({
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+  gap: "10px",
 });

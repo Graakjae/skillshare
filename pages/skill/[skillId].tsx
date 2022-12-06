@@ -9,6 +9,8 @@ import { User } from "../../models/User";
 import PreviousPageArrow from "../../components/PreviousPageArrow";
 import { Skill } from "../../models/Skill";
 import LoadingSpinner from "../../components/loadingSpinner/loadingSpinner";
+import Image from "next/image";
+import updateIcon from "../../icons/updateIcon.png";
 
 const SkillDetailsPage: NextPage = () => {
   const [skill, setSkill] = useState<Skill>();
@@ -71,7 +73,19 @@ const SkillDetailsPage: NextPage = () => {
         <div>
           <Center>
             <Card>
-              <H2>{skill?.label}</H2>
+              <NameWrapper>
+                <H2>{skill?.label}</H2>
+                <div
+                  style={{
+                    position: "relative",
+                    width: "30px",
+                    marginBlockStart: "0.5em",
+                    marginBlockEnd: "0.5em",
+                  }}
+                >
+                  <Image src={updateIcon} alt="Update icon" />
+                </div>
+              </NameWrapper>
               <ProjectImage src={skill?.image} alt={skill?.label} />
             </Card>
           </Center>
@@ -82,7 +96,7 @@ const SkillDetailsPage: NextPage = () => {
                 {users
                   ?.filter((user: User) =>
                     user?.skills?.primarySkills.some(
-                      (p) => p.label === skill?.label
+                      (primarySkill) => primarySkill.label === skill?.label
                     )
                   )
                   .map((filteredUsers: User, key: Key) => (
@@ -122,7 +136,7 @@ const SkillDetailsPage: NextPage = () => {
               </UsersWrapper>
             </Wrapper>
           </Center>
-          <button onClick={deleteSkill}>Delete project</button>
+          <button onClick={deleteSkill}>Delete skill</button>
         </div>
       )}
     </div>
@@ -172,6 +186,13 @@ const Flex = styled.div({
   padding: "10px 0px 10px 0px",
 });
 
+const NameWrapper = styled.div({
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+  gap: "10px",
+});
+
 const LoadingSpinnerWrapper = styled.div({
   marginTop: "120px",
 });
@@ -184,6 +205,7 @@ const Card = styled.div({
   boxShadow: "0 0px 2px 0 rgba(0, 0, 0, 0.25)",
   display: "flex",
   justifyContent: "space-between",
+  alignItems: "center",
   padding: "20px",
 });
 
