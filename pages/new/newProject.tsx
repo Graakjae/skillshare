@@ -1,11 +1,9 @@
 import { addDoc } from "@firebase/firestore";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
-import { ChangeEvent, useEffect, useState } from "react";
+import { useState } from "react";
 import styled from "styled-components";
 import { projectsRef } from "../../firebase-config";
-import { Project } from "../../models/Project";
-import typescript from "../../icons/typescript.png";
 import { Button } from "../../components/button/button";
 
 const NewProject: NextPage = () => {

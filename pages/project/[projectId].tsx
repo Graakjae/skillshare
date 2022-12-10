@@ -8,7 +8,6 @@ import { Project } from "../../models/Project";
 import { User } from "../../models/User";
 import PreviousPageArrow from "../../components/PreviousPageArrow";
 import LoadingSpinner from "../../components/loadingSpinner/loadingSpinner";
-import Link from "next/link";
 import Image from "next/image";
 import updateIcon from "../../icons/updateIcon.png";
 

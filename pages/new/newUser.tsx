@@ -1,5 +1,5 @@
 import { addDoc } from "@firebase/firestore";
-import { ChangeEvent, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { projectsRef, skillsRef, usersRef } from "../../firebase-config";
 import styled from "styled-components";
 import { onSnapshot } from "firebase/firestore";

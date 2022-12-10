@@ -1,10 +1,7 @@
-import { NextComponentType } from "next";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { relative } from "path";
-import { FC, ReactEventHandler } from "react";
+import { FC } from "react";
 import styled from "styled-components";
-import { colors } from "../util/colorPalette";
 import styles from "./styles/Nav.module.css";
 import logo from "../public/images/impactLogo.png";
 import Image from "next/image";

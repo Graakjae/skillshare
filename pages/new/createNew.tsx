@@ -1,11 +1,5 @@
-import { addDoc } from "@firebase/firestore";
 import { NextPage } from "next";
-import { useRouter } from "next/router";
-import { ChangeEvent, useEffect, useState } from "react";
 import styled from "styled-components";
-import { projectsRef } from "../../firebase-config";
-import { Project } from "../../models/Project";
-import typescript from "../../icons/typescript.png";
 import Image from "next/image";
 import userIcon from "../../icons/user-icon.png";
 import pencilIcon from "../../icons/pencil-icon.png";
@@ -13,11 +7,6 @@ import bookIcon from "../../icons/book-icon.png";
 import Link from "next/link";
 
 const CreateNew: NextPage = () => {
-  const [name, setName] = useState("");
-  const router = useRouter();
-  const [errorMessage, setErrorMessage] = useState("");
-  const [image, setImage] = useState("");
-
   return (
     <Center>
       <W>

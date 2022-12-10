@@ -1,24 +1,18 @@
-import { addDoc } from "@firebase/firestore";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
-import { ChangeEvent, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import styled from "styled-components";
 import { projectsRef } from "../../firebase-config";
 import { Project } from "../../models/Project";
-import typescript from "../../icons/typescript.png";
-import { User } from "../../models/User";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { Button } from "../../components/button/button";
-import Link from "next/link";
 
 const UpdateProject: NextPage = () => {
   const [project, setProject] = useState<Project>();
   const [name, setName] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
   const [image, setImage] = useState("");
   const router = useRouter();
   const { updateProjectId } = router.query;
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {

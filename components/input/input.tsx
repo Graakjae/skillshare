@@ -1,6 +1,5 @@
 import React, { FC, useRef, useState } from "react";
 import styled from "styled-components";
-import { SvgIcon } from "../svg-icon";
 import { colors } from "../../util/colorPalette";
 import { getStatusColor } from "../../lib/helpers/color.helper";
 import { Status, TextAlignment } from "../../models/ui-types";

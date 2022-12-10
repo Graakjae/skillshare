@@ -1,11 +1,9 @@
-import { addDoc } from "@firebase/firestore";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
-import { ChangeEvent, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import styled from "styled-components";
 import { projectsRef, skillsRef, usersRef } from "../../firebase-config";
 import { Project } from "../../models/Project";
-import typescript from "../../icons/typescript.png";
 import { User } from "../../models/User";
 import { doc, getDoc, onSnapshot, updateDoc } from "firebase/firestore";
 import { Skill } from "../../models/Skill";

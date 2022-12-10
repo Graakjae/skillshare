@@ -1,10 +1,8 @@
-import { addDoc } from "@firebase/firestore";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
-import { ChangeEvent, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import styled from "styled-components";
 import { skillsRef } from "../../firebase-config";
-import typescript from "../../icons/typescript.png";
 import { Skill } from "../../models/Skill";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { Button } from "../../components/button/button";
@@ -15,7 +13,6 @@ const UpdateSkill: NextPage = () => {
   const [image, setImage] = useState("");
   const router = useRouter();
   const { updateSkillId } = router.query;
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {

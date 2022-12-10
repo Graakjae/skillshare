@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import styled from "styled-components";
 import { useRouter } from "next/router";
 import { onSnapshot } from "firebase/firestore";
-import Link from "next/link";
 import { skillsRef } from "../firebase-config";
 import { Skill } from "../models/Skill";
 import { Input } from "../components/input/input";

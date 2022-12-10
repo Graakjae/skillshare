@@ -4,7 +4,6 @@ import styled from "styled-components";
 import { useRouter } from "next/router";
 import { onSnapshot } from "firebase/firestore";
 import { projectsRef } from "../firebase-config";
-import Link from "next/link";
 import { Input } from "../components/input/input";
 import { Project } from "../models/Project";
 import LoadingSpinner from "../components/loadingSpinner/loadingSpinner";

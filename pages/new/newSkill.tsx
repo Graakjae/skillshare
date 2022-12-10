@@ -1,11 +1,9 @@
 import { addDoc } from "@firebase/firestore";
-import { ChangeEvent, useEffect, useState } from "react";
+import { useState } from "react";
 import { skillsRef } from "../../firebase-config";
-import Image from "next/image";
 import styled from "styled-components";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
-import Placeholder from "../../public/images/placeholderImage.jpg";
 import { Button } from "../../components/button/button";
 
 const NewSkill: NextPage = () => {
