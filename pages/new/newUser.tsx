@@ -144,7 +144,7 @@ const NewUser: NextPage = () => {
             dateFormat="dd/MM/yyyy"
             className="dates"
             selected={date}
-            onChange={(e) => setDate(e)}
+            onChange={setDate}
           />
         </DateWrapper>
         <InputWrapper>
