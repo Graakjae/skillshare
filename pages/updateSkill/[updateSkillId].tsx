@@ -130,4 +130,5 @@ const ImageInput = styled.input({
   backgroundColor: "white",
   height: "50px",
   cursor: "pointer",
+  border: "none",
 });
