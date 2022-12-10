@@ -90,12 +90,12 @@ const UserDetailsPage: NextPage = () => {
           <LoadingSpinner />
         </LoadingSpinnerWrapper>
       )}
-
       {loading ? null : (
         <div>
           <UserCenter>
             <div>
-              {/* <PreviousPageArrow /> */}
+              <PreviousPageArrow />
+
               <UserWrapper>
                 <UserImage src={user?.image} alt={user?.name} />
                 <UserInformation>
@@ -218,7 +218,7 @@ const LoadingSpinnerWrapper = styled.div({
 });
 
 const UserCenter = styled.div({
-  marginTop: "50px",
+  marginTop: "10px",
   justifyContent: "center",
   display: "flex",
   alignItems: "center",
@@ -265,6 +265,7 @@ const UserWrapper = styled.div({
   justifyContent: "center",
   gap: "20px",
   width: "100%",
+  marginTop: "20px",
 });
 
 const UserInformation = styled.div({

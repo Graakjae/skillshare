@@ -66,7 +66,6 @@ const ProjectDetailsPage: NextPage = () => {
 
   return (
     <div>
-      <PreviousPageArrow />
       {loading && (
         <LoadingSpinnerWrapper>
           <LoadingSpinner />
@@ -74,6 +73,9 @@ const ProjectDetailsPage: NextPage = () => {
       )}
       {loading ? null : (
         <div>
+          <PreviousPageArrowWrapper>
+            <PreviousPageArrow />
+          </PreviousPageArrowWrapper>
           <Center>
             <Card>
               <NameWrapper>
@@ -183,7 +185,6 @@ const Wrapper = styled.div({
   justifyContent: "center",
   borderTop: "1px solid black",
   width: "80%",
-  marginTop: "30px",
 });
 
 const MainTeamWrapper = styled.div({
@@ -219,6 +220,7 @@ const H3 = styled.h2({
 const Center = styled.div({
   justifyContent: "center",
   display: "flex",
+  marginTop: "30px",
 });
 
 const Flex = styled.div({
@@ -275,4 +277,8 @@ const Grid = styled.div({
   display: "grid",
   justifyItems: "space-between",
   gridTemplateColumns: "repeat(1, 1fr)",
+});
+
+const PreviousPageArrowWrapper = styled.div({
+  marginLeft: "10%",
 });

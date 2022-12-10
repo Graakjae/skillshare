@@ -10,15 +10,16 @@ const PreviousPageArrow: NextPage = () => {
 
   return (
     <div>
-      <PreviousPageArrow2 onClick={() => router.back()}>
+      <PreviousPageWrapper onClick={() => router.back()}>
         <Image src={arrow} alt="previous page arrow" width={20} height={20} />
-      </PreviousPageArrow2>
+      </PreviousPageWrapper>
     </div>
   );
 };
 
 export default PreviousPageArrow;
 
-const PreviousPageArrow2 = styled.span({
+const PreviousPageWrapper = styled.span({
   cursor: "pointer",
+  position: "relative",
 });

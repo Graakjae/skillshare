@@ -64,13 +64,15 @@ const SkillDetailsPage: NextPage = () => {
 
   return (
     <div>
-      <PreviousPageArrow />
       {loading ? (
         <LoadingSpinnerWrapper>
           <LoadingSpinner />
         </LoadingSpinnerWrapper>
       ) : (
         <div>
+          <PreviousPageArrowWrapper>
+            <PreviousPageArrow />
+          </PreviousPageArrowWrapper>
           <Center>
             <Card>
               <NameWrapper>
@@ -177,7 +179,6 @@ const Wrapper = styled.div({
   display: "flex",
   borderTop: "1px solid black",
   width: "80%",
-  marginTop: "30px",
   justifyContent: "center",
 });
 
@@ -216,6 +217,7 @@ const H3 = styled.h2({
 const Center = styled.div({
   justifyContent: "center",
   display: "flex",
+  marginTop: "30px",
 });
 
 const Flex = styled.div({
@@ -273,4 +275,8 @@ const Name = styled.p({
   alignItems: "center",
   display: "flex",
   fontSize: "18px",
+});
+
+const PreviousPageArrowWrapper = styled.div({
+  marginLeft: "10%",
 });
