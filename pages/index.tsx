@@ -1,5 +1,6 @@
 import type { NextPage } from "next";
 import Head from "next/head";
+import Users from "./users";
 
 const Home: NextPage = () => {
   return (
@@ -10,7 +11,9 @@ const Home: NextPage = () => {
         <meta name="robots" content="noindex"></meta>
       </Head>
 
-      <main></main>
+      <main>
+        <Users />
+      </main>
 
       <footer></footer>
     </div>

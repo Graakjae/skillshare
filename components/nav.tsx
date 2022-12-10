@@ -36,11 +36,11 @@ const Nav: FC = ({}) => {
         </CreateWrapper>
       </FlexWrapper>
       <HeaderStyle className={styles.topnav}>
-        <Link href="/users">
-          <L className={router.pathname == "/users" ? styles.active : ""}>
+        <Link href="/">
+          <L className={router.pathname == "/" ? styles.active : ""}>
             USERS
             <div
-              className={router.pathname == "/users" ? styles.underline : ""}
+              className={router.pathname == "/" ? styles.underline : ""}
             ></div>
           </L>
         </Link>
