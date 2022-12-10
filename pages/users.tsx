@@ -235,7 +235,7 @@ const FilterText = styled.div({
   justifyContent: "space-between",
 });
 
-const Checkbox = styled.div({
+const Checkbox = styled.label({
   display: "flex",
   justifyContent: "space-between",
   alignItems: "center",
