@@ -176,7 +176,7 @@ const NewUser: NextPage = () => {
         </InputWrapper>
 
         <InputWrapper>
-          <H3>Choose a profilepicture</H3>
+          <H3>Choose a profilepicture (Link)</H3>
           <ImageInput
             type="text"
             value={image}

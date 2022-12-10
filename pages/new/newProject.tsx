@@ -34,7 +34,7 @@ const NewProject: NextPage = () => {
           <Input2 type="text" onChange={(e) => setName(e.target.value)} />
         </InputWrapper>
         <InputWrapper>
-          <H3>Image</H3>
+          <H3>Image (Link)</H3>
           <ImageInput
             type="text"
             value={image}
