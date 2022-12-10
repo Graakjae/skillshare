@@ -29,8 +29,6 @@ const NewUser: NextPage = () => {
   const [slack, setSlack] = useState("");
   const [mail, setMail] = useState("");
 
-  const [errorMessage, setErrorMessage] = useState("");
-
   const router = useRouter();
 
   async function handleSubmit(event: any) {
@@ -79,27 +77,6 @@ const NewUser: NextPage = () => {
     });
     return () => unsubscribe();
   }, []);
-
-  function handleImageChange(event: ChangeEvent<HTMLInputElement>) {
-    if (!event.target.files) {
-      setErrorMessage("Image input is invalid");
-      return;
-    }
-
-    const file = event.target.files[0];
-    if (file.size < 500000) {
-      // image file size must be below 0,5MB
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        setImage(event.target?.result as string);
-      };
-      reader.readAsDataURL(file);
-      setErrorMessage(""); // reset errorMessage state
-    } else {
-      // if not below 0.5MB display an error message using the errorMessage state
-      setErrorMessage("Picture is too large");
-    }
-  }
 
   let skillOptions: any = [];
 
@@ -200,13 +177,13 @@ const NewUser: NextPage = () => {
 
         <InputWrapper>
           <H3>Choose a profilepicture</H3>
-          <input type="file" accept="image/*" onChange={handleImageChange} />
-          <DisplayImage
-            src={image}
-            alt="Placeholder image"
-            // onError={(e: any) => (e.target.src = "placeholderImage.jpg")}
+          <ImageInput
+            type="text"
+            value={image}
+            onChange={(e) => setImage(e.target.value)}
+            placeholder=""
           />
-          <p>{errorMessage}</p>
+          <DisplayImage src={image} alt="Placeholder image" />
         </InputWrapper>
         <div onClick={() => router.push("/users")}>
           <Button label={"Create user"} type="submit"></Button>
@@ -270,3 +247,11 @@ const LocationSelect = styled.select({
 });
 
 const Form = styled.form({});
+
+const ImageInput = styled.input({
+  width: "100%",
+  backgroundColor: "white",
+  height: "50px",
+  cursor: "pointer",
+  border: "none",
+});

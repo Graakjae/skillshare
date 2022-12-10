@@ -11,7 +11,6 @@ import { Button } from "../../components/button/button";
 const NewProject: NextPage = () => {
   const [name, setName] = useState("");
   const router = useRouter();
-  const [errorMessage, setErrorMessage] = useState("");
   const [image, setImage] = useState("");
 
   async function handleSubmit(event: any) {
@@ -26,27 +25,6 @@ const NewProject: NextPage = () => {
     await addDoc(projectsRef, newProjectList);
   }
 
-  function handleImageChange(event: ChangeEvent<HTMLInputElement>) {
-    if (!event.target.files) {
-      setErrorMessage("Image input is invalid");
-      return;
-    }
-
-    const file = event.target.files[0];
-    if (file.size < 500000) {
-      // image file size must be below 0,5MB
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        setImage(event.target?.result as string);
-      };
-      reader.readAsDataURL(file);
-      setErrorMessage(""); // reset errorMessage state
-    } else {
-      // if not below 0.5MB display an error message using the errorMessage state
-      setErrorMessage("Picture is too large");
-    }
-  }
-
   return (
     <section>
       <form onSubmit={handleSubmit}>
@@ -58,9 +36,9 @@ const NewProject: NextPage = () => {
         <InputWrapper>
           <H3>Image</H3>
           <ImageInput
-            type="file"
-            accept="image/*"
-            onChange={handleImageChange}
+            type="text"
+            value={image}
+            onChange={(e) => setImage(e.target.value)}
             placeholder=""
           />
           <DisplayImage
@@ -68,7 +46,6 @@ const NewProject: NextPage = () => {
             alt="Choose a picture"
             // onError={(e: any) => (e.target.src = typescript)}
           />
-          <p>{errorMessage}</p>
         </InputWrapper>
         <div onClick={() => router.push("/projects")}>
           <Button label={"Create project"} type="submit"></Button>

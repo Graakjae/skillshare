@@ -73,7 +73,7 @@ const UpdateSkill: NextPage = () => {
             onChange={(e) => setImage(e.target.value)}
             placeholder=""
           />
-          <SkillImg
+          <DisplayImage
             src={image}
             alt="Choose a picture"
             // onError={(e: any) => (e.target.src = typescript)}
@@ -89,8 +89,13 @@ const UpdateSkill: NextPage = () => {
 
 export default UpdateSkill;
 
-const SkillImg = styled.img({
+const DisplayImage = styled.img({
+  margin: "0 auto",
+  display: "block",
+  marginTop: "40px",
+  marginBottom: "40px",
   width: "200px",
+  borderRadius: "10px",
 });
 
 const H1 = styled.h1({

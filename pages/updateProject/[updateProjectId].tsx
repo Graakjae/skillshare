@@ -76,7 +76,7 @@ const UpdateProject: NextPage = () => {
             onChange={(e) => setImage(e.target.value)}
             placeholder=""
           />
-          <ProjectImg src={image} alt="Choose a picture" />
+          <DisplayImage src={image} alt="Choose a picture" />
         </InputWrapper>
         <div onClick={() => router.push(`/project/${updateProjectId}`)}>
           <Button label={"Update project"} type="submit"></Button>
@@ -88,8 +88,13 @@ const UpdateProject: NextPage = () => {
 
 export default UpdateProject;
 
-const ProjectImg = styled.img({
+const DisplayImage = styled.img({
+  margin: "0 auto",
+  display: "block",
+  marginTop: "40px",
+  marginBottom: "40px",
   width: "200px",
+  borderRadius: "10px",
 });
 
 const H1 = styled.h1({

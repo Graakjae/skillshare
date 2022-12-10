@@ -223,11 +223,7 @@ const UpdateUser: NextPage = () => {
             onChange={(e) => setImage(e.target.value)}
             placeholder=""
           />
-          <UserImg
-            src={image}
-            alt="Choose a picture"
-            // onError={(e: any) => (e.target.src = typescript)}
-          />
+          <DisplayImage src={image} alt="Choose a picture" />
         </InputWrapper>
 
         <div onClick={() => router.push(`/user/${updateUserId}`)}>
@@ -240,9 +236,15 @@ const UpdateUser: NextPage = () => {
 
 export default UpdateUser;
 
-const UserImg = styled.img({
-  width: "100px",
+const DisplayImage = styled.img({
+  margin: "0 auto",
+  display: "block",
+  marginTop: "40px",
+  marginBottom: "40px",
+  width: "200px",
+  borderRadius: "10px",
 });
+
 const H1 = styled.h1({
   textAlign: "center",
 });

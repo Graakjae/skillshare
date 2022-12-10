@@ -10,7 +10,6 @@ import { Button } from "../../components/button/button";
 
 const NewSkill: NextPage = () => {
   const [label, setLabel] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
   const [image, setImage] = useState("");
   const router = useRouter();
 
@@ -26,27 +25,6 @@ const NewSkill: NextPage = () => {
     await addDoc(skillsRef, newSkillList);
   }
 
-  function handleImageChange(event: ChangeEvent<HTMLInputElement>) {
-    if (!event.target.files) {
-      setErrorMessage("Image input is invalid");
-      return;
-    }
-
-    const file = event.target.files[0];
-    if (file.size < 500000) {
-      // image file size must be below 0,5MB
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        setImage(event.target?.result as string);
-      };
-      reader.readAsDataURL(file);
-      setErrorMessage(""); // reset errorMessage state
-    } else {
-      // if not below 0.5MB display an error message using the errorMessage state
-      setErrorMessage("Picture is too large");
-    }
-  }
-
   return (
     <section>
       <form onSubmit={handleSubmit}>
@@ -58,13 +36,12 @@ const NewSkill: NextPage = () => {
         <InputWrapper>
           <H3>Image</H3>
           <ImageInput
-            type="file"
-            accept="image/*"
-            onChange={handleImageChange}
+            type="text"
+            value={image}
+            onChange={(e) => setImage(e.target.value)}
             placeholder=""
           />
           <DisplayImage src={image} alt="Choose a picture" />
-          <p>{errorMessage}</p>
         </InputWrapper>
         <div onClick={() => router.push("/skills")}>
           <Button label={"Create skill"} type="submit"></Button>
