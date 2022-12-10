@@ -5,6 +5,7 @@ export type User = {
   name: string;
   id: string;
   title: string;
+  mail: string;
   skills: {
     primarySkills: Skill[];
     secondarySkills: Skill[];
@@ -13,7 +14,7 @@ export type User = {
     mainProjects: Project[];
     assistedProjects: Project[];
   };
-  experience: number;
+  date: string;
   location: {
     label: string;
     value: number;

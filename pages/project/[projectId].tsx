@@ -99,55 +99,64 @@ const ProjectDetailsPage: NextPage = () => {
           </Center>
           <Center>
             <Wrapper>
-              <UsersWrapper>
-                <H3>Project team</H3>
-                {users
-                  ?.filter((user: User) =>
-                    user?.projects?.mainProjects.some(
-                      (p) => p.label === project?.label
-                    )
-                  )
-                  .map((filteredUsers: User, key: Key) => (
-                    <Flex
-                      key={key}
-                      onClick={() => router.push(`/user/${filteredUsers?.id}`)}
-                    >
-                      <UserImages
-                        src={filteredUsers?.image}
-                        alt={filteredUsers?.name}
-                      />
-                      <Name>{filteredUsers.name}</Name>
-                    </Flex>
-                  ))}
-              </UsersWrapper>
+              <MainTeamWrapper>
+                <div>
+                  <H3>The {project?.label} team</H3>
+                  <Grid>
+                    {users
+                      ?.filter((user: User) =>
+                        user?.projects?.mainProjects.some(
+                          (p) => p.label === project?.label
+                        )
+                      )
+                      .map((filteredUsers: User, key: Key) => (
+                        <Flex
+                          key={key}
+                          onClick={() =>
+                            router.push(`/user/${filteredUsers?.id}`)
+                          }
+                        >
+                          <UserImages
+                            src={filteredUsers?.image}
+                            alt={filteredUsers?.name}
+                          />
+                          <Name>{filteredUsers.name}</Name>
+                        </Flex>
+                      ))}
+                  </Grid>
+                </div>
+              </MainTeamWrapper>
               <Line></Line>
-              <UsersWrapper>
-                <H3>Assisted on the project</H3>
-                {users
-                  ?.filter((user: User) =>
-                    user?.projects?.assistedProjects.some(
-                      (p) => p.label === project?.label
-                    )
-                  )
-                  .map((filteredUsers: User, key: Key) => (
-                    <Flex
-                      key={key}
-                      onClick={() => router.push(`/user/${filteredUsers?.id}`)}
-                    >
-                      <UserImages
-                        src={filteredUsers?.image}
-                        alt={filteredUsers?.name}
-                      />
-                      <Name>{filteredUsers.name}</Name>
-                    </Flex>
-                  ))}
-              </UsersWrapper>
+              <AssistingTeamWrapper>
+                <div>
+                  <H3>Assisted on {project?.label}</H3>
+                  <Grid>
+                    {users
+                      ?.filter((user: User) =>
+                        user?.projects?.assistedProjects.some(
+                          (p) => p.label === project?.label
+                        )
+                      )
+                      .map((filteredUsers: User, key: Key) => (
+                        <Flex
+                          key={key}
+                          onClick={() =>
+                            router.push(`/user/${filteredUsers?.id}`)
+                          }
+                        >
+                          <UserImages
+                            src={filteredUsers?.image}
+                            alt={filteredUsers?.name}
+                          />
+                          <Name>{filteredUsers.name}</Name>
+                        </Flex>
+                      ))}
+                  </Grid>
+                </div>
+              </AssistingTeamWrapper>
             </Wrapper>
           </Center>
-          <button onClick={deleteProject}>Delete project</button>
-          <button onClick={() => router.push(`/updateProject/${projectId}`)}>
-            Update
-          </button>
+          <DeleteButton onClick={deleteProject}>Delete project</DeleteButton>
         </div>
       )}
     </div>
@@ -163,6 +172,7 @@ const ProjectImage = styled.img({
 
 const UserImages = styled.img({
   width: "50px",
+  height: "50px",
   borderRadius: "50px",
   marginRight: "20px",
 });
@@ -176,7 +186,25 @@ const Wrapper = styled.div({
   marginTop: "30px",
 });
 
-const UsersWrapper = styled.div({});
+const MainTeamWrapper = styled.div({
+  width: "100%",
+  display: "grid",
+  columnGap: "0px",
+  justifyItems: "space-between",
+  marginTop: "0px",
+  rowGap: "0px",
+  gridTemplateColumns: "repeat(1, 1fr)",
+});
+const AssistingTeamWrapper = styled.div({
+  width: "100%",
+  display: "grid",
+  columnGap: "0px",
+  justifyItems: "space-between",
+  marginTop: "0px",
+  rowGap: "0px",
+  gridTemplateColumns: "repeat(1, 1fr)",
+  marginLeft: "30px",
+});
 
 const H2 = styled.h2({
   textAlign: "left",
@@ -202,6 +230,7 @@ const Name = styled.p({
   justifyContent: "center",
   alignItems: "center",
   display: "flex",
+  fontSize: "18px",
 });
 
 const LoadingSpinnerWrapper = styled.div({
@@ -230,4 +259,20 @@ const NameWrapper = styled.div({
   justifyContent: "center",
   alignItems: "center",
   gap: "10px",
+});
+
+const DeleteButton = styled.button({
+  width: "100px",
+  height: "30px",
+  color: "red",
+  margin: "0 auto",
+  display: "block",
+  marginTop: "150px",
+});
+
+const Grid = styled.div({
+  width: "100%",
+  display: "grid",
+  justifyItems: "space-between",
+  gridTemplateColumns: "repeat(1, 1fr)",
 });

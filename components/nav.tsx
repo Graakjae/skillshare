@@ -9,7 +9,7 @@ import styles from "./styles/Nav.module.css";
 import logo from "../public/images/impactLogo.png";
 import Image from "next/image";
 
-const Nav: NextComponentType = ({}) => {
+const Nav: FC = ({}) => {
   const router = useRouter();
 
   return (
@@ -25,13 +25,15 @@ const Nav: NextComponentType = ({}) => {
           <Image src={logo} alt="logo" />
         </ImageWrapper>
         <H1Wrapper>
-          <Link href="/">
+          <Link href="/users">
             <H1>IMPACT SKILLSHARE</H1>
           </Link>
         </H1Wrapper>
-        <Link href="/new/createNew">
-          <H3>Create</H3>
-        </Link>
+        <CreateWrapper>
+          <Link href="/new/createNew">
+            <H3>Create</H3>
+          </Link>
+        </CreateWrapper>
       </FlexWrapper>
       <HeaderStyle className={styles.topnav}>
         <Link href="/users">
@@ -87,6 +89,7 @@ const H1Wrapper = styled.div({
 const H3 = styled.h3({
   cursor: "pointer",
   fontSize: "20px",
+  textAlign: "end",
 });
 
 const ImageWrapper = styled.div({
@@ -104,9 +107,18 @@ const HeaderStyle = styled.div({
 
 const NavWrapper = styled.div({});
 
+const CreateWrapper = styled.div({
+  marginRight: "30px",
+});
+
 const FlexWrapper = styled.div({
-  display: "flex",
+  width: "100%",
   justifyContent: "space-between",
+  margin: "auto",
+  display: "grid",
+  columnGap: "10px",
+  rowGap: "30px",
+  gridTemplateColumns: "repeat(3, 1fr)",
 });
 
 const L = styled.a({

@@ -6,6 +6,7 @@ import styled from "styled-components";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
 import Placeholder from "../../public/images/placeholderImage.jpg";
+import { Button } from "../../components/button/button";
 
 const NewSkill: NextPage = () => {
   const [label, setLabel] = useState("");
@@ -62,18 +63,12 @@ const NewSkill: NextPage = () => {
             onChange={handleImageChange}
             placeholder=""
           />
-          <Image
-            src={image}
-            alt="Choose a picture"
-            width={100}
-            height={100}
-            // onError={(e) => (e.target.src = Placeholder)}
-          />
+          <DisplayImage src={image} alt="Choose a picture" />
           <p>{errorMessage}</p>
         </InputWrapper>
-        <button type="submit" onClick={() => router.push("/skills")}>
-          Create skill
-        </button>
+        <div onClick={() => router.push("/skills")}>
+          <Button label={"Create skill"} type="submit"></Button>
+        </div>
       </form>
     </section>
   );
@@ -96,8 +91,6 @@ const H3 = styled.h3({
 
 const InputWrapper = styled.div({
   width: "80%",
-  height: "200px",
-  backgroundColor: "grey",
   display: "block",
   margin: "auto",
   ["div"]: {
@@ -119,4 +112,12 @@ const ImageInput = styled.input({
   backgroundColor: "white",
   height: "50px",
   cursor: "pointer",
+});
+
+const DisplayImage = styled.img({
+  margin: "0 auto",
+  display: "block",
+  marginTop: "40px",
+  marginBottom: "40px",
+  width: "200px",
 });

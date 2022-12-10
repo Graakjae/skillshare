@@ -24,12 +24,12 @@ a {
   box-sizing: border-box;
 }
 
-h1, h2, h3, h4, a, input, button {
+h1, h2, h3, h4, a, button {
   font-family: 'Flama';
   text-transform: uppercase; 
 }
 
-p {
+p, input {
   font-family: "Plantin";
 }
 

@@ -3,36 +3,33 @@ import { NextPage } from "next";
 import { useRouter } from "next/router";
 import { ChangeEvent, useEffect, useState } from "react";
 import styled from "styled-components";
-import { projectsRef } from "../../firebase-config";
-import { Project } from "../../models/Project";
+import { skillsRef } from "../../firebase-config";
 import typescript from "../../icons/typescript.png";
-import { User } from "../../models/User";
+import { Skill } from "../../models/Skill";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { Button } from "../../components/button/button";
-import Link from "next/link";
 
-const UpdateProject: NextPage = () => {
-  const [project, setProject] = useState<Project>();
+const UpdateSkill: NextPage = () => {
+  const [skill, setSkill] = useState<Skill>();
   const [name, setName] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
   const [image, setImage] = useState("");
   const router = useRouter();
-  const { updateProjectId } = router.query;
+  const { updateSkillId } = router.query;
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
-      console.log(updateProjectId);
-      if (!updateProjectId) return;
+      console.log(updateSkillId);
+      if (!updateSkillId) return;
       try {
         {
           // @ts-ignore disable-next-line
-          const docRef = doc(projectsRef, updateProjectId);
+          const docRef = doc(skillsRef, updateSkillId);
           const docData = await getDoc(docRef);
-          const project = docData.data() as Project;
-          setProject(project);
-          setName(project.label);
-          setImage(project.image);
+          const skill = docData.data() as Skill;
+          setSkill(skill);
+          setName(skill.label);
+          setImage(skill.image);
         }
       } catch (error) {
       } finally {
@@ -40,26 +37,26 @@ const UpdateProject: NextPage = () => {
       }
     };
     fetchData();
-  }, [updateProjectId]);
+  }, [updateSkillId]);
 
   async function handleSubmit(event: any) {
     event.preventDefault();
 
-    const projectUpdate = {
+    const SkillUpdate = {
       label: name,
       image: image,
     };
 
     // @ts-ignore disable-next-line
-    const docRef = doc(projectsRef, updateProjectId);
+    const docRef = doc(skillsRef, updateSkillId);
 
-    await updateDoc(docRef, projectUpdate);
+    await updateDoc(docRef, SkillUpdate);
   }
 
   return (
     <section>
       <form onSubmit={handleSubmit}>
-        <H1>Update project: {project?.label}</H1>
+        <H1>Update Skill: {skill?.label}</H1>
         <InputWrapper>
           <H3>Name</H3>
           <Input2
@@ -76,25 +73,28 @@ const UpdateProject: NextPage = () => {
             onChange={(e) => setImage(e.target.value)}
             placeholder=""
           />
-          <ProjectImg src={image} alt="Choose a picture" />
+          <SkillImg
+            src={image}
+            alt="Choose a picture"
+            // onError={(e: any) => (e.target.src = typescript)}
+          />
         </InputWrapper>
-        <div onClick={() => router.push(`/project/${updateProjectId}`)}>
-          <Button label={"Update project"} type="submit"></Button>
+        <div onClick={() => router.push(`/skill/${updateSkillId}`)}>
+          <Button label={"Update skill"} type="submit"></Button>
         </div>
       </form>
     </section>
   );
 };
 
-export default UpdateProject;
+export default UpdateSkill;
 
-const ProjectImg = styled.img({
+const SkillImg = styled.img({
   width: "200px",
 });
 
 const H1 = styled.h1({
   textAlign: "center",
-  color: "blue",
 });
 
 const H3 = styled.h3({
@@ -125,5 +125,4 @@ const ImageInput = styled.input({
   backgroundColor: "white",
   height: "50px",
   cursor: "pointer",
-  border: "none",
 });

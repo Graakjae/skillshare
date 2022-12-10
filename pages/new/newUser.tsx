@@ -9,6 +9,10 @@ import { NextPage } from "next";
 import { locations } from "../../lib/helpers/locations";
 import { useRouter } from "next/router";
 import Select from "react-select";
+import { Button } from "../../components/button/button";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import da from "date-fns/locale/da";
 
 const NewUser: NextPage = () => {
   const [name, setName] = useState("");
@@ -19,10 +23,12 @@ const NewUser: NextPage = () => {
   const [projects, setProjects] = useState<Project[]>();
   const [mainProjects, setMainProjects] = useState([]);
   const [assistedProjects, setAssistedProjects] = useState([]);
-  const [experience, setExperience] = useState(0);
+  const [date, setDate] = useState(new Date());
   const [location, setLocation] = useState("");
   const [image, setImage] = useState("");
   const [slack, setSlack] = useState("");
+  const [mail, setMail] = useState("");
+
   const [errorMessage, setErrorMessage] = useState("");
 
   const router = useRouter();
@@ -41,10 +47,11 @@ const NewUser: NextPage = () => {
         mainProjects: mainProjects,
         assistedProjects: assistedProjects,
       },
-      experience: experience,
+      date: date,
       location: location,
       image: image,
       slack: slack,
+      mail: mail,
       id: `ucb-${Date.now()}`,
     };
 
@@ -123,16 +130,23 @@ const NewUser: NextPage = () => {
           <Input2 type="text" onChange={(e) => setName(e.target.value)} />
         </InputWrapper>
         <InputWrapper>
+          <H3>Mail</H3>
+          <Input2 type="text" onChange={(e) => setMail(e.target.value)} />
+        </InputWrapper>
+        <InputWrapper>
           <H3>Title</H3>
           <Input2 type="text" onChange={(e) => setTitle(e.target.value)} />
         </InputWrapper>
-        <InputWrapper>
-          <H3>Experience</H3>
-          <Input2
-            type="text"
-            onChange={(e) => setExperience(e.target.valueAsNumber)}
+        <DateWrapper>
+          <H3>Date of joining impact</H3>
+          <DatePicker
+            locale={da}
+            dateFormat="dd/MM/yyyy"
+            className="dates"
+            selected={date}
+            onChange={(e) => setDate(e)}
           />
-        </InputWrapper>
+        </DateWrapper>
         <InputWrapper>
           <H3>Primary skills</H3>
           <Select
@@ -187,16 +201,16 @@ const NewUser: NextPage = () => {
         <InputWrapper>
           <H3>Choose a profilepicture</H3>
           <input type="file" accept="image/*" onChange={handleImageChange} />
-          <UserImg
+          <DisplayImage
             src={image}
             alt="Placeholder image"
             // onError={(e: any) => (e.target.src = "placeholderImage.jpg")}
           />
           <p>{errorMessage}</p>
         </InputWrapper>
-        <Button type="submit" onClick={() => router.push("/users")}>
-          Create user
-        </Button>
+        <div onClick={() => router.push("/users")}>
+          <Button label={"Create user"} type="submit"></Button>
+        </div>
       </div>
     </Form>
   );
@@ -204,9 +218,15 @@ const NewUser: NextPage = () => {
 
 export default NewUser;
 
-const UserImg = styled.img({
-  width: "100px",
+const DisplayImage = styled.img({
+  margin: "0 auto",
+  display: "block",
+  marginTop: "40px",
+  marginBottom: "40px",
+  width: "200px",
+  borderRadius: "10px",
 });
+
 const H1 = styled.h1({
   textAlign: "center",
 });
@@ -232,6 +252,17 @@ const InputWrapper = styled.div({
   },
 });
 
+const DateWrapper = styled.div({
+  width: "80%",
+  display: "block",
+  margin: "auto",
+  ["input"]: {
+    border: "none",
+    width: "100%",
+    height: "50px",
+  },
+});
+
 const LocationSelect = styled.select({
   width: "100%",
   border: "none",
@@ -239,19 +270,3 @@ const LocationSelect = styled.select({
 });
 
 const Form = styled.form({});
-
-const Button = styled.button({
-  width: "260px",
-  height: "60px",
-  backgroundColor: "black",
-  color: "white",
-  fontSize: "25px",
-  border: "none",
-  transition: "1s all ease",
-  display: "block",
-  margin: "auto",
-  ["&:hover"]: {
-    backgroundColor: "#FFEC3F",
-    color: "black",
-  },
-});

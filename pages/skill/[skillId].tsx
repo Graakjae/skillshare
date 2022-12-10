@@ -81,9 +81,14 @@ const SkillDetailsPage: NextPage = () => {
                     width: "30px",
                     marginBlockStart: "0.5em",
                     marginBlockEnd: "0.5em",
+                    cursor: "pointer",
                   }}
                 >
-                  <Image src={updateIcon} alt="Update icon" />
+                  <Image
+                    src={updateIcon}
+                    alt="Update icon"
+                    onClick={() => router.push(`/updateSkill/${skillId}`)}
+                  />
                 </div>
               </NameWrapper>
               <ProjectImage src={skill?.image} alt={skill?.label} />
@@ -91,52 +96,64 @@ const SkillDetailsPage: NextPage = () => {
           </Center>
           <Center>
             <Wrapper>
-              <UsersWrapper>
-                <H3>Users with {skill?.label} as a primary skill</H3>
-                {users
-                  ?.filter((user: User) =>
-                    user?.skills?.primarySkills.some(
-                      (primarySkill) => primarySkill.label === skill?.label
-                    )
-                  )
-                  .map((filteredUsers: User, key: Key) => (
-                    <Flex
-                      key={key}
-                      onClick={() => router.push(`/user/${filteredUsers?.id}`)}
-                    >
-                      <UserImages
-                        src={filteredUsers?.image}
-                        alt={filteredUsers?.name}
-                      />
-                      <p>{filteredUsers.name}</p>
-                    </Flex>
-                  ))}
-              </UsersWrapper>
+              <PrimaryUsers>
+                <div>
+                  <H3>Users with {skill?.label} as a primary skill</H3>
+                  <Grid>
+                    {users
+                      ?.filter((user: User) =>
+                        user?.skills?.primarySkills.some(
+                          (primarySkill) => primarySkill.label === skill?.label
+                        )
+                      )
+                      .map((filteredUsers: User, key: Key) => (
+                        <Flex
+                          key={key}
+                          onClick={() =>
+                            router.push(`/user/${filteredUsers?.id}`)
+                          }
+                        >
+                          <UserImages
+                            src={filteredUsers?.image}
+                            alt={filteredUsers?.name}
+                          />
+                          <Name>{filteredUsers.name}</Name>
+                        </Flex>
+                      ))}
+                  </Grid>
+                </div>
+              </PrimaryUsers>
               <Line></Line>
-              <UsersWrapper>
-                <H3>Users with {skill?.label} as a secondary skill</H3>
-                {users
-                  ?.filter((user: User) =>
-                    user?.skills?.secondarySkills.some(
-                      (p) => p.label === skill?.label
-                    )
-                  )
-                  .map((filteredUsers: User, key: Key) => (
-                    <Flex
-                      key={key}
-                      onClick={() => router.push(`/user/${filteredUsers?.id}`)}
-                    >
-                      <UserImages
-                        src={filteredUsers?.image}
-                        alt={filteredUsers?.name}
-                      />
-                      <p>{filteredUsers.name}</p>
-                    </Flex>
-                  ))}
-              </UsersWrapper>
+              <SecondaryUsers>
+                <div>
+                  <H3>Users with {skill?.label} as a secondary skill</H3>
+                  <Grid>
+                    {users
+                      ?.filter((user: User) =>
+                        user?.skills?.secondarySkills.some(
+                          (p) => p.label === skill?.label
+                        )
+                      )
+                      .map((filteredUsers: User, key: Key) => (
+                        <Flex
+                          key={key}
+                          onClick={() =>
+                            router.push(`/user/${filteredUsers?.id}`)
+                          }
+                        >
+                          <UserImages
+                            src={filteredUsers?.image}
+                            alt={filteredUsers?.name}
+                          />
+                          <Name>{filteredUsers.name}</Name>
+                        </Flex>
+                      ))}
+                  </Grid>
+                </div>
+              </SecondaryUsers>
             </Wrapper>
           </Center>
-          <button onClick={deleteSkill}>Delete skill</button>
+          <DeleteButton onClick={deleteSkill}>Delete skill</DeleteButton>
         </div>
       )}
     </div>
@@ -151,19 +168,39 @@ const ProjectImage = styled.img({
 
 const UserImages = styled.img({
   width: "50px",
+  height: "50px",
   borderRadius: "50px",
   marginRight: "20px",
 });
 
 const Wrapper = styled.div({
   display: "flex",
-  justifyContent: "space-around",
   borderTop: "1px solid black",
   width: "80%",
   marginTop: "30px",
+  justifyContent: "center",
 });
 
-const UsersWrapper = styled.div({});
+const PrimaryUsers = styled.div({
+  width: "100%",
+  display: "grid",
+  columnGap: "0px",
+  justifyItems: "space-between",
+  marginTop: "0px",
+  rowGap: "0px",
+  gridTemplateColumns: "repeat(1, 1fr)",
+});
+
+const SecondaryUsers = styled.div({
+  width: "100%",
+  display: "grid",
+  columnGap: "0px",
+  justifyItems: "space-between",
+  marginTop: "0px",
+  rowGap: "0px",
+  gridTemplateColumns: "repeat(1, 1fr)",
+  marginLeft: "30px",
+});
 
 const H2 = styled.h2({
   textAlign: "left",
@@ -184,6 +221,7 @@ const Center = styled.div({
 const Flex = styled.div({
   display: "flex",
   padding: "10px 0px 10px 0px",
+  cursor: "pointer",
 });
 
 const NameWrapper = styled.div({
@@ -212,4 +250,27 @@ const Card = styled.div({
 const Line = styled.div({
   borderLeft: "1px solid black",
   marginTop: "0.8em",
+});
+
+const DeleteButton = styled.button({
+  width: "100px",
+  height: "30px",
+  color: "red",
+  margin: "0 auto",
+  display: "block",
+  marginTop: "150px",
+});
+
+const Grid = styled.div({
+  width: "100%",
+  display: "grid",
+  justifyItems: "space-between",
+  gridTemplateColumns: "repeat(1, 1fr)",
+});
+
+const Name = styled.p({
+  justifyContent: "center",
+  alignItems: "center",
+  display: "flex",
+  fontSize: "18px",
 });

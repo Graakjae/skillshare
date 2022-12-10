@@ -76,15 +76,15 @@ const UserDetailsPage: NextPage = () => {
     }
   }
 
-  // let skillOptions: any = [];
-
-  // user?.skills.primarySkills?.map((primary: Skill) => {
-  //   skillOptions.push({ id: skills?.id });
-  //   console.log(skills?.map((s: Skill, key: Key) => <p key={key}>{s.id}</p>));
-  // });
-
+  function getDate(startDate: any) {
+    if (startDate) {
+      const date = startDate.toDate();
+      console.log(date);
+      return `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
+    }
+  }
   return (
-    <div>
+    <Center>
       {loading && (
         <LoadingSpinnerWrapper>
           <LoadingSpinner />
@@ -99,7 +99,7 @@ const UserDetailsPage: NextPage = () => {
               <UserWrapper>
                 <UserImage src={user?.image} alt={user?.name} />
                 <UserInformation>
-                  <UserInformation2>
+                  <UserInformationWrapper>
                     <Flex>
                       <H2>{user?.name}</H2>
                       <div
@@ -108,16 +108,24 @@ const UserDetailsPage: NextPage = () => {
                           width: "30px",
                           marginBlockStart: "0.5em",
                           marginBlockEnd: "0.5em",
+                          cursor: "pointer",
                         }}
                       >
-                        <Image src={updateIcon} alt="Update icon" />
+                        <Image
+                          src={updateIcon}
+                          alt="Update icon"
+                          onClick={() => router.push(`/updateUser/${userId}`)}
+                        />
                       </div>
                     </Flex>
-                    <p>{user?.title}</p>
-                    <p>Experience: {user?.experience}</p>
-                    <p>Location: {user?.location.label}</p>
-                    <p>Slack me! {user?.slack}</p>
-                  </UserInformation2>
+                    <Title>{user?.title}</Title>
+                    <Information>Mail: {user?.mail}</Information>
+                    <Information>
+                      Joined Impact: {getDate(user?.date)}{" "}
+                    </Information>
+                    <Information>Location: {user?.location.label}</Information>
+                    <Information>Slack me! {user?.slack}</Information>
+                  </UserInformationWrapper>
                 </UserInformation>
               </UserWrapper>
               <Center>
@@ -125,32 +133,36 @@ const UserDetailsPage: NextPage = () => {
                   <CategorySkills>
                     <div>
                       <H3>Primary skills</H3>
-                      {user?.skills?.primarySkills?.map(
-                        (primarySkill: Skill, key: Key) => (
-                          <P
-                            key={key}
-                            onClick={() =>
-                              router.push(`/skill/${primarySkill?.id}`)
-                            }
-                          >
-                            {primarySkill?.label}
-                          </P>
-                        )
-                      )}
+                      <Grid>
+                        {user?.skills.primarySkills?.map(
+                          (primarySkill: Skill, key: Key) => (
+                            <Flex
+                              key={key}
+                              onClick={() =>
+                                router.push(`/skill/${primarySkill?.id}`)
+                              }
+                            >
+                              <P>{primarySkill.label}</P>
+                            </Flex>
+                          )
+                        )}
+                      </Grid>
 
                       <H3>Secondary skills</H3>
-                      {user?.skills?.secondarySkills?.map(
-                        (secondarySkill: Skill, key: Key) => (
-                          <P
-                            key={key}
-                            onClick={() =>
-                              router.push(`/skill/${secondarySkill?.id}`)
-                            }
-                          >
-                            {secondarySkill?.label}
-                          </P>
-                        )
-                      )}
+                      <Grid>
+                        {user?.skills.secondarySkills?.map(
+                          (secondarySkill: Skill, key: Key) => (
+                            <Flex
+                              key={key}
+                              onClick={() =>
+                                router.push(`/skill/${secondarySkill?.id}`)
+                              }
+                            >
+                              <P>{secondarySkill.label}</P>
+                            </Flex>
+                          )
+                        )}
+                      </Grid>
                     </div>
                   </CategorySkills>
                   <Line></Line>
@@ -192,10 +204,10 @@ const UserDetailsPage: NextPage = () => {
               </Center>
             </div>
           </UserCenter>
-          <button onClick={deleteUser}>Delete user</button>
+          <DeleteButton onClick={deleteUser}>Delete user</DeleteButton>
         </div>
       )}
-    </div>
+    </Center>
   );
 };
 
@@ -204,17 +216,13 @@ export default UserDetailsPage;
 const LoadingSpinnerWrapper = styled.div({
   marginTop: "120px",
 });
-const UserImages = styled.img({
-  width: "50px",
-  borderRadius: "50px",
-  marginRight: "20px",
-});
 
 const UserCenter = styled.div({
   marginTop: "50px",
   justifyContent: "center",
   display: "flex",
   alignItems: "center",
+  maxWidth: "1100px",
 });
 
 const Center = styled.div({
@@ -223,17 +231,29 @@ const Center = styled.div({
 });
 
 const UserImage = styled.img({
-  width: "40%",
+  width: "450px",
+  height: "363px",
+  objectFit: "cover",
+  borderRadius: "5px",
+});
+const Title = styled.p({
+  fontSize: "25px",
+});
+
+const Information = styled.p({
+  padding: "3px 0px 3px 0px",
+  fontSize: "16px",
 });
 
 const P = styled.p({
   cursor: "pointer",
   marginBlockStart: "0.8em",
   marginBlockEnd: "0.8em",
+  fontSize: "18px",
 });
 
 const SkillsProjectsWrapper = styled.div({
-  width: "82%",
+  width: "900px",
   marginTop: "30px",
   display: "flex",
   borderTop: "1px solid black",
@@ -251,23 +271,34 @@ const UserInformation = styled.div({
   borderLeft: "5px solid #FFEC3F",
   borderTop: "1px solid #CCCCCC",
   borderBottom: "1px solid #CCCCCC",
-  width: "40%",
+  width: "450px",
+  height: "363px",
   boxShadow: "0 0px 2px 0 rgba(0, 0, 0, 0.25);",
 });
 
-const UserInformation2 = styled.div({
+const UserInformationWrapper = styled.div({
   padding: "5px 5px 5px 10px",
 });
 
 const CategoryProjects = styled.div({
   width: "100%",
-  display: "flex",
+  display: "grid",
+  columnGap: "0px",
+  justifyItems: "space-between",
+  marginTop: "0px",
+  rowGap: "0px",
+  gridTemplateColumns: "repeat(1, 1fr)",
   marginLeft: "30px",
 });
 
 const CategorySkills = styled.div({
   width: "100%",
-  display: "flex",
+  display: "grid",
+  columnGap: "0px",
+  justifyItems: "space-between",
+  marginTop: "0px",
+  rowGap: "0px",
+  gridTemplateColumns: "repeat(1, 1fr)",
 });
 
 const H3 = styled.h3({
@@ -283,7 +314,8 @@ const H2 = styled.h2({
 });
 
 const Line = styled.div({
-  borderLeft: "1px solid black",
+  padding: "12px",
+  borderRight: "1px solid black",
   marginBlockStart: "0.8em",
 });
 
@@ -293,7 +325,6 @@ const Flex = styled.div({
 });
 
 const Grid = styled.div({
-  maxWidth: "1000px",
   width: "100%",
   display: "grid",
   columnGap: "0px",
@@ -307,4 +338,13 @@ const Grid = styled.div({
   [mq("lg")]: {
     gridTemplateColumns: "repeat(2, 1fr)",
   },
+});
+
+const DeleteButton = styled.button({
+  width: "100px",
+  height: "30px",
+  color: "red",
+  margin: "0 auto",
+  display: "block",
+  marginTop: "150px",
 });

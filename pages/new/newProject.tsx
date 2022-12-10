@@ -6,6 +6,7 @@ import styled from "styled-components";
 import { projectsRef } from "../../firebase-config";
 import { Project } from "../../models/Project";
 import typescript from "../../icons/typescript.png";
+import { Button } from "../../components/button/button";
 
 const NewProject: NextPage = () => {
   const [name, setName] = useState("");
@@ -62,16 +63,16 @@ const NewProject: NextPage = () => {
             onChange={handleImageChange}
             placeholder=""
           />
-          <ProjectImg
+          <DisplayImage
             src={image}
             alt="Choose a picture"
             // onError={(e: any) => (e.target.src = typescript)}
           />
           <p>{errorMessage}</p>
         </InputWrapper>
-        <button type="submit" onClick={() => router.push("/projects")}>
-          Opret Project
-        </button>
+        <div onClick={() => router.push("/projects")}>
+          <Button label={"Create project"} type="submit"></Button>
+        </div>
       </form>
     </section>
   );
@@ -79,7 +80,11 @@ const NewProject: NextPage = () => {
 
 export default NewProject;
 
-const ProjectImg = styled.img({
+const DisplayImage = styled.img({
+  margin: "0 auto",
+  display: "block",
+  marginTop: "40px",
+  marginBottom: "40px",
   width: "200px",
 });
 

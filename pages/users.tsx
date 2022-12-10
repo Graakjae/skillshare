@@ -15,6 +15,7 @@ import { colors } from "../util/colorPalette";
 import LoadingSpinner from "../components/loadingSpinner/loadingSpinner";
 import Image from "next/image";
 import { mq } from "../media-query";
+import { Slider } from "@mui/material";
 
 const Users: NextPage = () => {
   const router = useRouter();
@@ -71,59 +72,65 @@ const Users: NextPage = () => {
   }
 
   return (
-    <div>
-      <main>
-        <div>
-          <Input onChange={(event) => setQuery(event.target.value)} />
-          <Filter>
-            <Center>
-              <FilterText>
-                <h3>Filter </h3>
-                <Image src={filter} alt="Filter" width={30} height={30} />
-              </FilterText>
-              <h3>Locations</h3>
-              {locations.map((location, key: Key) => (
-                <Checkbox key={key}>
-                  <p>{location.label}</p>
-                  <input
-                    type={"checkbox"}
-                    value={location.label}
-                    onChange={handleCategoryChange}
-                  />
-                </Checkbox>
-              ))}
-            </Center>
-          </Filter>
-        </div>
-
-        <Grid>
-          {filteredList
-            .filter((user) => {
-              if (query === "") {
-                return user;
-              } else if (
-                user.name.toLowerCase().includes(query.toLowerCase())
-              ) {
-                return user;
-              }
-            })
-            .map((user, key) => (
-              <Column key={key} onClick={() => router.push(`/user/${user.id}`)}>
-                <ImageDiv>
-                  <UserImage
-                    src={user?.image}
-                    alt={user?.name}
-                    placeholder={user?.name}
-                  />
-                </ImageDiv>
-                <Name>{user.name}</Name>
-                <Title>{user.title}</Title>
-              </Column>
+    <main>
+      <div>
+        <Input onChange={(event) => setQuery(event.target.value)} />
+        <Filter>
+          <Center>
+            <FilterText>
+              <h3>Filter </h3>
+              <Image src={filter} alt="Filter" width={30} height={30} />
+            </FilterText>
+            <h3>Locations</h3>
+            {locations.map((location, key: Key) => (
+              <Checkbox key={key}>
+                <p>{location.label}</p>
+                <input
+                  type={"checkbox"}
+                  value={location.label}
+                  onChange={handleCategoryChange}
+                />
+              </Checkbox>
             ))}
-        </Grid>
-        {loading && <LoadingSpinner />}
-      </main>
-    </div>
+            <h3>Experience</h3>
+            <Slider
+              size="medium"
+              defaultValue={70}
+              aria-label="Small"
+              valueLabelDisplay="auto"
+              sx={{
+                color: "black",
+              }}
+            />
+          </Center>
+        </Filter>
+      </div>
+
+      <Grid>
+        {filteredList
+          .filter((user) => {
+            if (query === "") {
+              return user;
+            } else if (user.name.toLowerCase().includes(query.toLowerCase())) {
+              return user;
+            }
+          })
+          .map((user, key) => (
+            <Column key={key} onClick={() => router.push(`/user/${user.id}`)}>
+              <ImageDiv>
+                <UserImage
+                  src={user?.image}
+                  alt={user?.name}
+                  placeholder={user?.name}
+                />
+              </ImageDiv>
+              <Name>{user.name}</Name>
+              <Title>{user.title}</Title>
+            </Column>
+          ))}
+      </Grid>
+      {loading && <LoadingSpinner />}
+    </main>
   );
 };
 
@@ -203,10 +210,6 @@ const Column = styled.div({
       backgroundRepeat: "no-repeat",
     },
   },
-
-  // "&:hover": {
-  //   backgroundColor: "#f28e1c",
-  // },
 });
 
 const Filter = styled.div({
@@ -216,6 +219,7 @@ const Filter = styled.div({
   width: "200px",
   justifyContent: "center",
   display: "flex",
+  marginTop: "30px",
 });
 
 const Center = styled.div({

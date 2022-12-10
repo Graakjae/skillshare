@@ -82,6 +82,7 @@ const H3 = styled.h3({
 const Image = styled.img({
   width: "100px",
   marginBottom: "30px",
+  maxHeight: "100px",
 });
 
 const Grid = styled.div({
