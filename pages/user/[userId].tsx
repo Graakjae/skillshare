@@ -20,7 +20,6 @@ const UserDetailsPage: NextPage = () => {
   const router = useRouter();
   const { userId } = router.query;
   const [loading, setLoading] = useState(true);
-  console.log(user);
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -31,6 +30,7 @@ const UserDetailsPage: NextPage = () => {
           const docRef = doc(usersRef, userId);
           const docData = await getDoc(docRef);
           console.log(docData.data());
+          console.log(user?.date);
 
           setUser(docData.data() as User);
         }
@@ -84,7 +84,7 @@ const UserDetailsPage: NextPage = () => {
     }
   }
   return (
-    <Center>
+    <PageWrapper>
       {loading && (
         <LoadingSpinnerWrapper>
           <LoadingSpinner />
@@ -95,7 +95,6 @@ const UserDetailsPage: NextPage = () => {
           <UserCenter>
             <div>
               <PreviousPageArrow />
-
               <UserWrapper>
                 <UserImage src={user?.image} alt={user?.name} />
                 <UserInformation>
@@ -121,7 +120,7 @@ const UserDetailsPage: NextPage = () => {
                     <Title>{user?.title}</Title>
                     <Information>Mail: {user?.mail}</Information>
                     <Information>
-                      Joined Impact: {getDate(user?.date)}{" "}
+                      Joined Impact: {getDate(user?.date)}
                     </Information>
                     <Information>Location: {user?.location.label}</Information>
                     <Information>Slack me! {user?.slack}</Information>
@@ -207,11 +206,16 @@ const UserDetailsPage: NextPage = () => {
           <DeleteButton onClick={deleteUser}>Delete user</DeleteButton>
         </div>
       )}
-    </Center>
+    </PageWrapper>
   );
 };
 
 export default UserDetailsPage;
+
+const PageWrapper = styled.div({
+  justifyContent: "center",
+  display: "flex",
+});
 
 const LoadingSpinnerWrapper = styled.div({
   marginTop: "120px",

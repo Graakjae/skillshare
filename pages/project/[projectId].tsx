@@ -209,6 +209,7 @@ const AssistingTeamWrapper = styled.div({
 const H2 = styled.h2({
   textAlign: "left",
   alignItems: "center",
+  fontSize: "30px",
 });
 const H3 = styled.h2({
   textAlign: "left",
@@ -225,6 +226,7 @@ const Center = styled.div({
 const Flex = styled.div({
   display: "flex",
   padding: "10px 0px 10px 0px",
+  cursor: "pointer",
 });
 
 const Name = styled.p({

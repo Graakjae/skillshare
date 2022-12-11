@@ -206,6 +206,7 @@ const SecondaryUsers = styled.div({
 const H2 = styled.h2({
   textAlign: "left",
   alignItems: "center",
+  fontSize: "30px",
 });
 
 const H3 = styled.h2({
