@@ -1,7 +1,8 @@
 import { initializeApp } from "firebase/app";
 import { getFirestore, collection } from "firebase/firestore";
+import { getAuth } from "firebase/auth";
 
-const firebaseConfig = {
+export const firebaseConfig = {
   apiKey: "AIzaSyAdZ3Ef6_Mk2aRea4yE-ms2DBmM_Pm0b_g",
   authDomain: "skillshare-611bc.firebaseapp.com",
   projectId: "skillshare-611bc",
@@ -14,7 +15,10 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+const auth = getAuth(app);
 
+export { auth, db };
 export const usersRef = collection(db, "users");
+export const usersRef2 = collection(db, "users2");
 export const projectsRef = collection(db, "projects");
 export const skillsRef = collection(db, "skills");

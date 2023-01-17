@@ -3,7 +3,7 @@ import { Key, useEffect, useMemo, useState } from "react";
 import styled from "styled-components";
 import { useRouter } from "next/router";
 import { onSnapshot } from "firebase/firestore";
-import { usersRef } from "../firebase-config";
+import { firebaseConfig, usersRef } from "../firebase-config";
 import { User } from "../models/User";
 import React from "react";
 import { locations } from "../lib/helpers/locations";
@@ -13,6 +13,9 @@ import LoadingSpinner from "../components/loadingSpinner/loadingSpinner";
 import Image from "next/image";
 import { mq } from "../media-query";
 import { Slider } from "@mui/material";
+import { getAuth, signOut } from "firebase/auth";
+import { initializeApp } from "firebase/app";
+import { experienceYear } from "../lib/helpers/experience";
 
 const Users: NextPage = () => {
   const router = useRouter();
@@ -20,9 +23,10 @@ const Users: NextPage = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [query, setQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
+  const [selectedCategory2, setSelectedCategory2] = useState<any>();
   const [loading, setLoading] = useState(true);
-
-  let categoriesFilter: any[] = [];
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
 
   useEffect(() => {
     const unsubscribe = onSnapshot(usersRef, (data) => {
@@ -40,6 +44,8 @@ const Users: NextPage = () => {
     });
     return () => unsubscribe();
   }, []);
+
+  let categoriesFilter: any[] = [];
 
   function getFilteredList() {
     if (!selectedCategory) {
@@ -68,6 +74,58 @@ const Users: NextPage = () => {
     }
   }
 
+  // let sliderFilter: any[] = [];
+
+  // function getSliderList() {
+  //   if (!selectedCategory2) {
+  //     return users;
+  //   }
+  //   // @ts-ignore disable-next-line
+  //   return users.filter((user) => user.experience === selectedCategory2);
+  // }
+  // console.log(selectedCategory2);
+
+  // var sliderList = useMemo(getSliderList, [selectedCategory2, users]);
+  // console.log(sliderList);
+
+  // function handleSliderChange(event: any) {
+  //   if (event.target.value) {
+  //     setSelectedCategory2(event.target.value);
+  //     console.log("event", event.target.value);
+  //     console.log(selectedCategory2);
+
+  //     sliderFilter.push(event.target.value);
+  //     console.log("filter", sliderFilter);
+  //   } else {
+  //     setSelectedCategory2("");
+  //     for (let index = 0; index < sliderFilter.length; index++) {
+  //       const element = sliderFilter[index];
+  //       if (element?.name === event.target.value) {
+  //         sliderFilter.splice(index, 1);
+  //       }
+  //     }
+  //   }
+  // }
+
+  const [price, setPrice] = useState(40);
+
+  // Triggered when the value gets updated while scrolling the slider:
+  const handleInput2 = (e) => {
+    setPrice(e.target.value);
+  };
+
+  const [value, setValue] = useState(0);
+
+  // Triggered when the value gets updated while scrolling the slider:
+  const handleInput = (e) => {
+    setValue(e.target.value);
+  };
+  const hotels = [
+    { name: "A", price: 40 },
+    { name: "B", price: 50 },
+    { name: "C", price: 60 },
+  ];
+
   return (
     <main>
       <div>
@@ -89,16 +147,51 @@ const Users: NextPage = () => {
                 />
               </Checkbox>
             ))}
-            <h3>Experience</h3>
+            <h3>Years of experience</h3>
+            {/* <input
+              type="range"
+              onInput={handleInput}
+              min={0}
+              max={15}
+              defaultValue={0}
+            /> */}
+            {/* <div>
+              {value
+                .filter((value: User) => {
+                  return value > parseInt(value, 10);
+                })
+                .map((experience: User) => {
+                  return (
+                    <p key={experience.experience.value}>
+                      {experience.experience.value}
+                    </p>
+                  );
+                })}
+            </div>*/}
             <Slider
               size="medium"
-              defaultValue={70}
+              min={0}
+              max={15}
               aria-label="Small"
               valueLabelDisplay="auto"
               sx={{
                 color: "black",
               }}
+              onChange={handleInput}
             />
+            {/* <div>
+              {users
+                .filter((user) => {
+                  return user.experience.label > parseInt(label, 10);
+                })
+                .map((user) => {
+                  return (
+                    <p key={user.name}>
+                      {user.name} {user.experience.label} &euro;{" "}
+                    </p>
+                  );
+                })}
+            </div> */}
           </Center>
         </Filter>
       </div>
@@ -107,6 +200,7 @@ const Users: NextPage = () => {
         {filteredList
           .filter((user) => {
             if (query === "") {
+              return user.location.value > parseInt(value, 10);
               return user;
             } else if (user.name.toLowerCase().includes(query.toLowerCase())) {
               return user;
@@ -126,6 +220,7 @@ const Users: NextPage = () => {
             </Column>
           ))}
       </Grid>
+
       {loading && <LoadingSpinner />}
     </main>
   );

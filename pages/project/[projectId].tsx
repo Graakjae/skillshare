@@ -3,13 +3,14 @@ import { NextPage } from "next";
 import { useRouter } from "next/router";
 import { Key, useEffect, useState } from "react";
 import styled from "styled-components";
-import { projectsRef, usersRef } from "../../firebase-config";
+import { projectsRef, usersRef, usersRef2 } from "../../firebase-config";
 import { Project } from "../../models/Project";
 import { User } from "../../models/User";
 import PreviousPageArrow from "../../components/PreviousPageArrow";
 import LoadingSpinner from "../../components/loadingSpinner/loadingSpinner";
 import Image from "next/image";
 import updateIcon from "../../icons/updateIcon.png";
+import { getAuth } from "firebase/auth";
 
 const ProjectDetailsPage: NextPage = () => {
   const [project, setProject] = useState<Project>();
@@ -17,14 +18,14 @@ const ProjectDetailsPage: NextPage = () => {
   const router = useRouter();
   const { projectId } = router.query;
   const [loading, setLoading] = useState(true);
+  const [admin, setAdmin] = useState();
+  const [email, setEmail] = useState("");
+  const auth = getAuth();
 
   useEffect(() => {
-    console.log(projectId);
-
     const fetchData = async () => {
       if (!projectId) return;
       console.log(projectId);
-
       try {
         {
           // @ts-ignore disable-next-line
@@ -50,6 +51,24 @@ const ProjectDetailsPage: NextPage = () => {
     });
     return () => unsubscribe();
   }, []);
+
+  useEffect(() => {
+    async function getUser() {
+      if (auth.currentUser) {
+        // @ts-ignore disable-next-line
+        setEmail(auth?.currentUser?.email);
+
+        const docRef = doc(usersRef2, auth?.currentUser?.uid);
+        const userData = (await getDoc(docRef)).data();
+        if (userData) {
+          setAdmin(userData.admin);
+        }
+        setLoading(false);
+      }
+    }
+
+    getUser();
+  }, [auth.currentUser]);
 
   async function deleteProject() {
     const confirmDelete = window.confirm(
@@ -88,11 +107,13 @@ const ProjectDetailsPage: NextPage = () => {
                     cursor: "pointer",
                   }}
                 >
-                  <Image
-                    src={updateIcon}
-                    alt="Update icon"
-                    onClick={() => router.push(`/updateProject/${projectId}`)}
-                  />
+                  {admin ? (
+                    <Image
+                      src={updateIcon}
+                      alt="Update icon"
+                      onClick={() => router.push(`/updateProject/${projectId}`)}
+                    />
+                  ) : null}
                 </div>
               </NameWrapper>
               <ProjectImage src={project?.image} alt={project?.label} />
@@ -157,7 +178,9 @@ const ProjectDetailsPage: NextPage = () => {
               </AssistingTeamWrapper>
             </Wrapper>
           </Center>
-          <DeleteButton onClick={deleteProject}>Delete project</DeleteButton>
+          {admin ? (
+            <DeleteButton onClick={deleteProject}>Delete project</DeleteButton>
+          ) : null}
         </div>
       )}
     </div>

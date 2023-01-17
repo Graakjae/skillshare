@@ -1,21 +1,19 @@
-import { addDoc } from "@firebase/firestore";
-import { useEffect, useState } from "react";
-import { projectsRef, skillsRef, usersRef } from "../../firebase-config";
-import styled from "styled-components";
-import { onSnapshot } from "firebase/firestore";
-import { Skill } from "../../models/Skill";
-import { Project } from "../../models/Project";
 import { NextPage } from "next";
-import { locations } from "../../lib/helpers/locations";
 import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
+import styled from "styled-components";
+import { projectsRef, skillsRef, usersRef2 } from "../../firebase-config";
+import { Project } from "../../models/Project";
+import { User } from "../../models/User";
+import { doc, getDoc, onSnapshot, updateDoc } from "firebase/firestore";
+import { Skill } from "../../models/Skill";
+import { locations } from "../../lib/helpers/locations";
 import Select from "react-select";
 import { Button } from "../../components/button/button";
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
-import da from "date-fns/locale/da";
-import { experienceYear } from "../../lib/helpers/experience";
+import { getAuth } from "firebase/auth";
 
-const NewUser: NextPage = () => {
+const UpdateProfile: NextPage = () => {
+  const [user, setUser] = useState<User>();
   const [name, setName] = useState("");
   const [title, setTitle] = useState("");
   const [skills, setSkills] = useState<Skill[]>();
@@ -24,40 +22,40 @@ const NewUser: NextPage = () => {
   const [projects, setProjects] = useState<Project[]>();
   const [mainProjects, setMainProjects] = useState<any>([]);
   const [assistedProjects, setAssistedProjects] = useState<any>([]);
-  const [date, setDate] = useState<any>(new Date());
-  const [location, setLocation] = useState<any>("");
-  const [image, setImage] = useState("");
   const [slack, setSlack] = useState("");
-  const [mail, setMail] = useState("");
-  const [experience, setExperience] = useState<any>("");
-
+  const [date, setDate] = useState({});
+  const [location, setLocation] = useState<any>({});
+  const [email, setEmail] = useState("");
+  const [image, setImage] = useState("");
   const router = useRouter();
+  const [loading, setLoading] = useState(true);
+  const auth = getAuth();
 
-  async function handleSubmit(event: any) {
-    event.preventDefault();
+  useEffect(() => {
+    async function getUser() {
+      if (auth.currentUser) {
+        // @ts-ignore disable-next-line
+        setEmail(auth?.currentUser?.email);
 
-    const newUserList = {
-      name: name,
-      title: title,
-      skills: {
-        primarySkills: primarySkills,
-        secondarySkills: secondarySkills,
-      },
-      projects: {
-        mainProjects: mainProjects,
-        assistedProjects: assistedProjects,
-      },
-      date: date,
-      location: location,
-      image: image,
-      slack: slack,
-      mail: mail,
-      experience: experience,
-      id: `ucb-${Date.now()}`,
-    };
+        const docRef = doc(usersRef2, auth?.currentUser?.uid);
+        const userData = (await getDoc(docRef)).data();
+        if (userData) {
+          setName(userData.name);
+          setImage(userData.image);
+          setTitle(userData.title);
+          setPrimarySkills(userData.skills.primarySkills);
+          setSecondarySkills(userData.skills.secondarySkills);
+          setMainProjects(userData.projects.mainProjects);
+          setAssistedProjects(userData.projects.assistedProjects);
+          setDate(userData.date);
+          setLocation(userData.location);
+        }
+        setLoading(false);
+      }
+    }
 
-    await addDoc(usersRef, newUserList);
-  }
+    getUser();
+  }, [auth.currentUser, name]);
 
   useEffect(() => {
     const unsubscribe = onSnapshot(skillsRef, (data) => {
@@ -81,6 +79,32 @@ const NewUser: NextPage = () => {
     return () => unsubscribe();
   }, []);
 
+  async function handleSubmit(event: any) {
+    event.preventDefault();
+
+    const profileUpdate = {
+      name: name,
+      title: title,
+      skills: {
+        primarySkills: primarySkills,
+        secondarySkills: secondarySkills,
+      },
+      projects: {
+        mainProjects: mainProjects,
+        assistedProjects: assistedProjects,
+      },
+      date: date,
+      location: location,
+      image: image,
+      slack: slack,
+      id: `ucb-${Date.now()}`,
+    };
+
+    // @ts-ignore disable-next-line
+    const docRef = doc(usersRef2, auth.currentUser.uid);
+    await updateDoc(docRef, profileUpdate);
+  }
+
   let skillOptions: any = [];
 
   skills?.map((skill: Skill) => {
@@ -102,44 +126,37 @@ const NewUser: NextPage = () => {
   });
 
   return (
-    <Form onSubmit={handleSubmit}>
-      <div>
-        <H1>New user</H1>
+    <section>
+      <form onSubmit={handleSubmit}>
+        <H1>Update your profile</H1>
         <InputWrapper>
           <H3>Name</H3>
-          <Input2 type="text" onChange={(e) => setName(e.target.value)} />
+          <Input2
+            value={name}
+            type="text"
+            onChange={(e) => setName(e.target.value)}
+          />
         </InputWrapper>
         <InputWrapper>
           <H3>Mail</H3>
-          <Input2 type="text" onChange={(e) => setMail(e.target.value)} />
+          <Input2
+            value={email}
+            type="text"
+            onChange={(e) => setEmail(e.target.value)}
+          />
         </InputWrapper>
         <InputWrapper>
           <H3>Title</H3>
-          <Input2 type="text" onChange={(e) => setTitle(e.target.value)} />
-        </InputWrapper>
-        <InputWrapper>
-          <H3>Experience</H3>
-          <Select
-            isSearchable={true}
-            isMulti={false}
-            defaultValue={null}
-            onChange={setExperience}
-            options={experienceYear}
+          <Input2
+            value={title}
+            type="text"
+            onChange={(e) => setTitle(e.target.value)}
           />
         </InputWrapper>
-        <DateWrapper>
-          <H3>Date of joining impact</H3>
-          <DatePicker
-            locale={da}
-            dateFormat="dd/MM/yyyy"
-            className="dates"
-            selected={date}
-            onChange={setDate}
-          />
-        </DateWrapper>
         <InputWrapper>
           <H3>Primary skills</H3>
           <Select
+            value={primarySkills}
             isSearchable={true}
             isMulti={true}
             defaultValue={null}
@@ -150,6 +167,7 @@ const NewUser: NextPage = () => {
         <InputWrapper>
           <H3>Secondary skills</H3>
           <Select
+            value={secondarySkills}
             isSearchable={true}
             isMulti={true}
             defaultValue={null}
@@ -160,6 +178,7 @@ const NewUser: NextPage = () => {
         <InputWrapper>
           <H3>Main projects</H3>
           <Select
+            value={mainProjects}
             isSearchable={true}
             isMulti={true}
             defaultValue={null}
@@ -170,6 +189,7 @@ const NewUser: NextPage = () => {
         <InputWrapper>
           <H3>Assisting projects</H3>
           <Select
+            value={assistedProjects}
             isSearchable={true}
             isMulti={true}
             defaultValue={null}
@@ -180,6 +200,7 @@ const NewUser: NextPage = () => {
         <InputWrapper>
           <H3>Location</H3>
           <Select
+            value={locations}
             isSearchable={true}
             isMulti={false}
             defaultValue={null}
@@ -189,24 +210,25 @@ const NewUser: NextPage = () => {
         </InputWrapper>
 
         <InputWrapper>
-          <H3>Choose a profilepicture (Link)</H3>
+          <H3>Image</H3>
           <ImageInput
             type="text"
             value={image}
             onChange={(e) => setImage(e.target.value)}
             placeholder=""
           />
-          <DisplayImage src={image} alt="Placeholder image" />
+          <DisplayImage src={image} alt="Choose a picture" />
         </InputWrapper>
-        <div onClick={() => router.push("/users")}>
-          <Button label={"Create user"} type="submit"></Button>
+
+        <div onClick={() => router.push(`/profile/profilePage`)}>
+          <Button label={"Update profile"} type="submit"></Button>
         </div>
-      </div>
-    </Form>
+      </form>
+    </section>
   );
 };
 
-export default NewUser;
+export default UpdateProfile;
 
 const DisplayImage = styled.img({
   margin: "0 auto",
@@ -242,17 +264,6 @@ const InputWrapper = styled.div({
   },
 });
 
-const DateWrapper = styled.div({
-  width: "80%",
-  display: "block",
-  margin: "auto",
-  ["input"]: {
-    border: "none",
-    width: "100%",
-    height: "50px",
-  },
-});
-
 const LocationSelect = styled.select({
   width: "100%",
   border: "none",
@@ -267,4 +278,15 @@ const ImageInput = styled.input({
   height: "50px",
   cursor: "pointer",
   border: "none",
+});
+
+const DateWrapper = styled.div({
+  width: "80%",
+  display: "block",
+  margin: "auto",
+  ["input"]: {
+    border: "none",
+    width: "100%",
+    height: "50px",
+  },
 });

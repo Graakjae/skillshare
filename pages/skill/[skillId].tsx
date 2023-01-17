@@ -4,21 +4,25 @@ import { NextPage } from "next";
 import { useRouter } from "next/router";
 import { Key, useEffect, useState } from "react";
 import styled from "styled-components";
-import { skillsRef, usersRef } from "../../firebase-config";
+import { skillsRef, usersRef, usersRef2 } from "../../firebase-config";
 import { User } from "../../models/User";
 import PreviousPageArrow from "../../components/PreviousPageArrow";
 import { Skill } from "../../models/Skill";
 import LoadingSpinner from "../../components/loadingSpinner/loadingSpinner";
 import Image from "next/image";
 import updateIcon from "../../icons/updateIcon.png";
+import { getAuth } from "firebase/auth";
 
 const SkillDetailsPage: NextPage = () => {
   const [skill, setSkill] = useState<Skill>();
   const [users, setUsers] = useState<User[]>();
   const [loading, setLoading] = useState<boolean>(true);
+  const [admin, setAdmin] = useState();
 
   const router = useRouter();
   const { skillId } = router.query;
+  const [email, setEmail] = useState("");
+  const auth = getAuth();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -49,6 +53,24 @@ const SkillDetailsPage: NextPage = () => {
     });
     return () => unsubscribe();
   }, []);
+
+  useEffect(() => {
+    async function getUser() {
+      if (auth.currentUser) {
+        // @ts-ignore disable-next-line
+        setEmail(auth?.currentUser?.email);
+
+        const docRef = doc(usersRef2, auth?.currentUser?.uid);
+        const userData = (await getDoc(docRef)).data();
+        if (userData) {
+          setAdmin(userData.admin);
+        }
+        setLoading(false);
+      }
+    }
+
+    getUser();
+  }, [auth.currentUser]);
 
   const deleteSkill = async () => {
     const confirmDelete = window.confirm(
@@ -86,11 +108,13 @@ const SkillDetailsPage: NextPage = () => {
                     cursor: "pointer",
                   }}
                 >
-                  <Image
-                    src={updateIcon}
-                    alt="Update icon"
-                    onClick={() => router.push(`/updateSkill/${skillId}`)}
-                  />
+                  {admin ? (
+                    <Image
+                      src={updateIcon}
+                      alt="Update icon"
+                      onClick={() => router.push(`/updateSkill/${skillId}`)}
+                    />
+                  ) : null}
                 </div>
               </NameWrapper>
               <ProjectImage src={skill?.image} alt={skill?.label} />
@@ -155,7 +179,9 @@ const SkillDetailsPage: NextPage = () => {
               </SecondaryUsers>
             </Wrapper>
           </Center>
-          <DeleteButton onClick={deleteSkill}>Delete skill</DeleteButton>
+          {admin ? (
+            <DeleteButton onClick={deleteSkill}>Delete skill</DeleteButton>
+          ) : null}
         </div>
       )}
     </div>

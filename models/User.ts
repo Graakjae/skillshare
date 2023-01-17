@@ -3,9 +3,11 @@ import { Skill } from "./Skill";
 
 export type User = {
   name: string;
+  email: string;
   id: string;
   title: string;
   mail: string;
+  admin: boolean;
   skills: {
     primarySkills: Skill[];
     secondarySkills: Skill[];
@@ -21,4 +23,8 @@ export type User = {
   };
   image: string;
   slack: string;
+  experience: {
+    label: number;
+    value: number;
+  };
 };

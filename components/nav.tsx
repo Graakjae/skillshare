@@ -1,13 +1,50 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { FC } from "react";
+import { FC, useEffect, useState } from "react";
 import styled from "styled-components";
 import styles from "./styles/Nav.module.css";
 import logo from "../public/images/impactLogo.png";
 import Image from "next/image";
+import { doc, getDoc, onSnapshot } from "firebase/firestore";
+import { usersRef2 } from "../firebase-config";
+import { User } from "../models/User";
+import { getAuth, signOut } from "firebase/auth";
 
 const Nav: FC = ({}) => {
+  const [user, setUser] = useState<User | undefined>();
+  const [email, setEmail] = useState("");
+  const [id, setId] = useState("");
+
   const router = useRouter();
+  const auth = getAuth();
+
+  useEffect(() => {
+    async function getUser() {
+      if (auth.currentUser) {
+        setEmail(auth.currentUser.email);
+
+        const docRef = doc(usersRef2, auth.currentUser.uid);
+        const userData = (await getDoc(docRef)).data();
+        if (userData) {
+          setAdmin(userData.admin);
+
+          console.log(id);
+        }
+      }
+    }
+
+    getUser();
+  }, [auth.currentUser]);
+
+  const [admin, setAdmin] = useState();
+
+  function handleSignOut() {
+    const confirmSignOut = window.confirm(`Are you sure you want to sign out?`);
+    if (confirmSignOut) {
+      signOut(auth);
+      router.push("/authentication/signIn");
+    }
+  }
 
   return (
     <NavWrapper>
@@ -27,9 +64,19 @@ const Nav: FC = ({}) => {
           </Link>
         </H1Wrapper>
         <CreateWrapper>
-          <Link href="/new/createNew">
-            <H3>Create</H3>
-          </Link>
+          <Left>
+            <H3 onClick={handleSignOut}>Sign Out</H3>
+
+            {admin ? (
+              <Link href="/new/createNew">
+                <H33>Create</H33>
+              </Link>
+            ) : (
+              <Link href={`/profile/profilePage`}>
+                <H33>Profile</H33>
+              </Link>
+            )}
+          </Left>
         </CreateWrapper>
       </FlexWrapper>
       <HeaderStyle className={styles.topnav}>
@@ -66,8 +113,8 @@ const Nav: FC = ({}) => {
 
 export default Nav;
 
-const Image2 = styled.img({
-  height: "20px",
+const Left = styled.div({
+  display: "flex",
 });
 
 const H1 = styled.h1({
@@ -83,10 +130,18 @@ const H1Wrapper = styled.div({
   alignItems: "center",
 });
 
+const H33 = styled.h3({
+  cursor: "pointer",
+  fontSize: "20px",
+  textAlign: "end",
+  marginLeft: "30px",
+});
+
 const H3 = styled.h3({
   cursor: "pointer",
   fontSize: "20px",
   textAlign: "end",
+  marginLeft: "200px",
 });
 
 const ImageWrapper = styled.div({

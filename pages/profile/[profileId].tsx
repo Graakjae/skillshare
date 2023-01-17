@@ -3,13 +3,7 @@ import { NextPage } from "next";
 import { useRouter } from "next/router";
 import { Key, useEffect, useState } from "react";
 import styled from "styled-components";
-import {
-  auth,
-  projectsRef,
-  skillsRef,
-  usersRef,
-  usersRef2,
-} from "../../firebase-config";
+import { auth, projectsRef, skillsRef, usersRef2 } from "../../firebase-config";
 import { Project } from "../../models/Project";
 import { Skill } from "../../models/Skill";
 import { User } from "../../models/User";
@@ -18,35 +12,56 @@ import LoadingSpinner from "../../components/loadingSpinner/loadingSpinner";
 import { mq } from "../../media-query";
 import Image from "next/image";
 import updateIcon from "../../icons/updateIcon.png";
+import { getAuth } from "firebase/auth";
 
-const UserDetailsPage: NextPage = () => {
+const ProfilePage: NextPage = () => {
   const [user, setUser] = useState<User | undefined>();
   const [skills, setSkills] = useState<Skill[]>();
   const [projects, setProjects] = useState<Project[]>();
-  const router = useRouter();
-  const { userId } = router.query;
-  const [loading, setLoading] = useState(true);
-  const [admin, setAdmin] = useState();
   const [email, setEmail] = useState("");
+  const [name, setName] = useState("");
+  const [title, setTitle] = useState("");
+  const [primarySkills, setPrimarySkills] = useState<any>([]);
+  const [secondarySkills, setSecondarySkills] = useState<any>([]);
+  const [mainProjects, setMainProjects] = useState<any>([]);
+  const [assistedProjects, setAssistedProjects] = useState<any>([]);
+  const [slack, setSlack] = useState("");
+  const [date, setDate] = useState({});
+  const [id, setId] = useState("");
+  const [location, setLocation] = useState<any>({});
+  const [image, setImage] = useState("");
+  const router = useRouter();
+  const { profileId } = router.query;
+  const [loading, setLoading] = useState(true);
+
+  const auth = getAuth();
 
   useEffect(() => {
-    const fetchUsers = async () => {
-      if (!userId) return;
-      try {
-        {
-          // @ts-ignore disable-next-line
-          const docRef = doc(usersRef, userId);
-          const docData = await getDoc(docRef);
-          console.log(docData.data());
-          setUser(docData.data() as User);
+    async function getUser() {
+      if (auth.currentUser) {
+        // @ts-ignore disable-next-line
+        setEmail(auth?.currentUser?.email);
+
+        const docRef = doc(usersRef2, auth?.currentUser?.uid);
+        const userData = (await getDoc(docRef)).data();
+        if (userData) {
+          setName(userData.name);
+          setImage(userData.image);
+          setTitle(userData.title);
+          setPrimarySkills(userData.skills.primarySkills);
+          setSecondarySkills(userData.skills.secondarySkills);
+          setMainProjects(userData.projects.mainProjects);
+          setAssistedProjects(userData.projects.assistedProjects);
+          setDate(userData.date);
+          setLocation(userData.location);
+          setId(userData.id);
         }
-      } catch (error) {
-      } finally {
         setLoading(false);
       }
-    };
-    fetchUsers();
-  }, [userId]);
+    }
+
+    getUser();
+  }, [auth.currentUser, name]);
 
   useEffect(() => {
     const unsubscribe = onSnapshot(skillsRef, (data) => {
@@ -70,36 +85,6 @@ const UserDetailsPage: NextPage = () => {
     return () => unsubscribe();
   }, []);
 
-  useEffect(() => {
-    async function getUser() {
-      if (auth.currentUser) {
-        // @ts-ignore disable-next-line
-        setEmail(auth?.currentUser?.email);
-
-        const docRef = doc(usersRef2, auth?.currentUser?.uid);
-        const userData = (await getDoc(docRef)).data();
-        if (userData) {
-          setAdmin(userData.admin);
-        }
-        setLoading(false);
-      }
-    }
-
-    getUser();
-  }, [auth.currentUser]);
-
-  async function deleteUser() {
-    const confirmDelete = window.confirm(
-      `Are you sure you want delete ${user?.name}?`
-    );
-    if (confirmDelete) {
-      // @ts-ignore disable-next-line
-      const docRef = doc(usersRef, userId);
-      deleteDoc(docRef);
-      router.push("/users");
-    }
-  }
-
   function getDate(startDate: any) {
     if (startDate) {
       const date = startDate.toDate();
@@ -107,7 +92,6 @@ const UserDetailsPage: NextPage = () => {
       return `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
     }
   }
-
   return (
     <PageWrapper>
       {loading && (
@@ -121,11 +105,11 @@ const UserDetailsPage: NextPage = () => {
             <div>
               <PreviousPageArrow />
               <UserWrapper>
-                <UserImage src={user?.image} alt={user?.name} />
+                <UserImage src={image} alt={name} />
                 <UserInformation>
                   <UserInformationWrapper>
                     <Flex>
-                      <H2>{user?.name}</H2>
+                      <H2>{name}</H2>
                       <div
                         style={{
                           position: "relative",
@@ -135,30 +119,20 @@ const UserDetailsPage: NextPage = () => {
                           cursor: "pointer",
                         }}
                       >
-                        {admin ? (
-                          <Image
-                            src={updateIcon}
-                            alt="Update icon"
-                            onClick={() => router.push(`/updateUser/${userId}`)}
-                          />
-                        ) : null}
+                        <Image
+                          src={updateIcon}
+                          alt="Update icon"
+                          onClick={() =>
+                            router.push(`/updateProfile/updateProfileId`)
+                          }
+                        />
                       </div>
                     </Flex>
-                    <Title>{user?.title}</Title>
-                    <Information>Mail: {user?.mail}</Information>
-                    <Information>
-                      Joined Impact: {getDate(user?.date)}
-                    </Information>
-                    <Information>Location: {user?.location.label}</Information>
-                    <Information>
-                      <a
-                        href="https://app.slack.com/client/T35237TC6/D03SJ38MQ3G"
-                        target="_blank"
-                        rel="noreferrer"
-                      >
-                        Slack me!
-                      </a>
-                    </Information>
+                    <Title>{title}</Title>
+                    <Information>Mail: {email}</Information>
+                    <Information>Joined Impact: {getDate(date)}</Information>
+                    <Information>Location: {location.label}</Information>
+                    <Information>Slack me! {slack}</Information>
                   </UserInformationWrapper>
                 </UserInformation>
               </UserWrapper>
@@ -168,23 +142,21 @@ const UserDetailsPage: NextPage = () => {
                     <div>
                       <H3>Primary skills</H3>
                       <Grid>
-                        {user?.skills.primarySkills?.map(
-                          (primarySkill: Skill, key: Key) => (
-                            <Flex
-                              key={key}
-                              onClick={() =>
-                                router.push(`/skill/${primarySkill?.id}`)
-                              }
-                            >
-                              <P>{primarySkill.label}</P>
-                            </Flex>
-                          )
-                        )}
+                        {primarySkills?.map((primarySkill: Skill, key: Key) => (
+                          <Flex
+                            key={key}
+                            onClick={() =>
+                              router.push(`/skill/${primarySkill?.id}`)
+                            }
+                          >
+                            <P>{primarySkill.label}</P>
+                          </Flex>
+                        ))}
                       </Grid>
 
                       <H3>Secondary skills</H3>
                       <Grid>
-                        {user?.skills.secondarySkills?.map(
+                        {secondarySkills?.map(
                           (secondarySkill: Skill, key: Key) => (
                             <Flex
                               key={key}
@@ -204,22 +176,20 @@ const UserDetailsPage: NextPage = () => {
                     <div>
                       <H3>Main Projects</H3>
                       <Grid>
-                        {user?.projects.mainProjects?.map(
-                          (mainProject: Project, key: Key) => (
-                            <Flex
-                              key={key}
-                              onClick={() =>
-                                router.push(`/project/${mainProject?.id}`)
-                              }
-                            >
-                              <P>{mainProject.label}</P>
-                            </Flex>
-                          )
-                        )}
+                        {mainProjects?.map((mainProject: Project, key: Key) => (
+                          <Flex
+                            key={key}
+                            onClick={() =>
+                              router.push(`/project/${mainProject?.id}`)
+                            }
+                          >
+                            <P>{mainProject.label}</P>
+                          </Flex>
+                        ))}
                       </Grid>
                       <H3>Assisted projects</H3>
                       <Grid>
-                        {user?.projects.assistedProjects?.map(
+                        {assistedProjects?.map(
                           (assistedProject: Project, key: Key) => (
                             <Flex
                               key={key}
@@ -238,16 +208,13 @@ const UserDetailsPage: NextPage = () => {
               </Center>
             </div>
           </UserCenter>
-          {user?.admin ? (
-            <DeleteButton onClick={deleteUser}>Delete user</DeleteButton>
-          ) : null}
         </div>
       )}
     </PageWrapper>
   );
 };
 
-export default UserDetailsPage;
+export default ProfilePage;
 
 const PageWrapper = styled.div({
   justifyContent: "center",

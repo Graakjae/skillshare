@@ -1,21 +1,26 @@
-import { addDoc } from "@firebase/firestore";
 import { useEffect, useState } from "react";
-import { projectsRef, skillsRef, usersRef } from "../../firebase-config";
-import styled from "styled-components";
-import { onSnapshot } from "firebase/firestore";
+import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import Link from "next/link";
+import React from "react";
+import logo from "../assets/img/logo.png";
+import { doc, setDoc } from "@firebase/firestore";
+import imgPlaceholder from "../assets/img/img-placeholder.jpg";
+import { projectsRef, skillsRef, usersRef2 } from "../../firebase-config";
+import { useRouter } from "next/router";
 import { Skill } from "../../models/Skill";
 import { Project } from "../../models/Project";
 import { NextPage } from "next";
-import { locations } from "../../lib/helpers/locations";
-import { useRouter } from "next/router";
-import Select from "react-select";
+import styled from "styled-components";
 import { Button } from "../../components/button/button";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import da from "date-fns/locale/da";
-import { experienceYear } from "../../lib/helpers/experience";
+import Select from "react-select";
+import { locations } from "../../lib/helpers/locations";
+import { onSnapshot } from "firebase/firestore";
 
-const NewUser: NextPage = () => {
+const SignUp: NextPage = () => {
+  const [errorMessage, setErrorMessage] = useState("");
   const [name, setName] = useState("");
   const [title, setTitle] = useState("");
   const [skills, setSkills] = useState<Skill[]>();
@@ -29,14 +34,33 @@ const NewUser: NextPage = () => {
   const [image, setImage] = useState("");
   const [slack, setSlack] = useState("");
   const [mail, setMail] = useState("");
-  const [experience, setExperience] = useState<any>("");
-
+  const [admin, setAdmin] = useState();
+  const auth = getAuth();
   const router = useRouter();
 
-  async function handleSubmit(event: any) {
+  function handleSignUp(event: any) {
     event.preventDefault();
+    const mail = event.target.mail.value;
+    const password = event.target.password.value;
 
-    const newUserList = {
+    createUserWithEmailAndPassword(auth, mail, password)
+      .then((userCredential) => {
+        const user = userCredential.user;
+        console.log(user);
+        saveUserInfo();
+        router.push("/users");
+      })
+      .catch((error) => {
+        let code = error.code;
+        console.log(code);
+        code = code.replaceAll("-", " ");
+        code = code.replaceAll("auth/", "");
+        setErrorMessage(code);
+      });
+  }
+
+  async function saveUserInfo() {
+    const newUser = {
       name: name,
       title: title,
       skills: {
@@ -52,11 +76,11 @@ const NewUser: NextPage = () => {
       image: image,
       slack: slack,
       mail: mail,
-      experience: experience,
+      admin: false,
       id: `ucb-${Date.now()}`,
     };
-
-    await addDoc(usersRef, newUserList);
+    const docRef = doc(usersRef2, auth?.currentUser?.uid);
+    await setDoc(docRef, newUser);
   }
 
   useEffect(() => {
@@ -80,7 +104,6 @@ const NewUser: NextPage = () => {
     });
     return () => unsubscribe();
   }, []);
-
   let skillOptions: any = [];
 
   skills?.map((skill: Skill) => {
@@ -102,30 +125,25 @@ const NewUser: NextPage = () => {
   });
 
   return (
-    <Form onSubmit={handleSubmit}>
+    <Form onSubmit={handleSignUp}>
       <div>
-        <H1>New user</H1>
+        <H1>Sign up</H1>
+
+        <InputWrapper>
+          <H3>Mail</H3>
+          <Input2 type="email" name="mail" />
+        </InputWrapper>
+        <InputWrapper>
+          <H3>Password</H3>
+          <Input2 type="password" name="password" />
+        </InputWrapper>
         <InputWrapper>
           <H3>Name</H3>
           <Input2 type="text" onChange={(e) => setName(e.target.value)} />
         </InputWrapper>
         <InputWrapper>
-          <H3>Mail</H3>
-          <Input2 type="text" onChange={(e) => setMail(e.target.value)} />
-        </InputWrapper>
-        <InputWrapper>
           <H3>Title</H3>
           <Input2 type="text" onChange={(e) => setTitle(e.target.value)} />
-        </InputWrapper>
-        <InputWrapper>
-          <H3>Experience</H3>
-          <Select
-            isSearchable={true}
-            isMulti={false}
-            defaultValue={null}
-            onChange={setExperience}
-            options={experienceYear}
-          />
         </InputWrapper>
         <DateWrapper>
           <H3>Date of joining impact</H3>
@@ -187,7 +205,6 @@ const NewUser: NextPage = () => {
             options={locations}
           />
         </InputWrapper>
-
         <InputWrapper>
           <H3>Choose a profilepicture (Link)</H3>
           <ImageInput
@@ -198,15 +215,19 @@ const NewUser: NextPage = () => {
           />
           <DisplayImage src={image} alt="Placeholder image" />
         </InputWrapper>
-        <div onClick={() => router.push("/users")}>
-          <Button label={"Create user"} type="submit"></Button>
-        </div>
+        <Button label={"Sign up"} type="submit"></Button>
+        <P>Already have a user?</P>
+        <Link href="/signIn">Sign in here</Link>
       </div>
     </Form>
   );
 };
 
-export default NewUser;
+export default SignUp;
+
+const P = styled.p({
+  textAlign: "center",
+});
 
 const DisplayImage = styled.img({
   margin: "0 auto",
@@ -224,6 +245,7 @@ const H1 = styled.h1({
 const H3 = styled.h3({
   marginBlockStart: "1em",
   marginBlockEnd: "0.1em",
+  textAlign: "left",
 });
 
 const Input2 = styled.input({
