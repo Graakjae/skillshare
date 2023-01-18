@@ -21,7 +21,8 @@ const Nav: FC = ({}) => {
   useEffect(() => {
     async function getUser() {
       if (auth.currentUser) {
-        setEmail(auth.currentUser.email);
+        // @ts-ignore disable-next-line
+        setEmail(auth?.currentUser?.email);
 
         const docRef = doc(usersRef2, auth.currentUser.uid);
         const userData = (await getDoc(docRef)).data();
