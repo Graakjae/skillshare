@@ -107,18 +107,14 @@ const Users: NextPage = () => {
   //   }
   // }
 
-  const [price, setPrice] = useState(40);
+  
+
+  
+  const [value, setValue] = useState<any>(0);
 
   // Triggered when the value gets updated while scrolling the slider:
-  const handleInput2 = (e) => {
-    setPrice(e.target.value);
-  };
-
-  const [value, setValue] = useState(0);
-
-  // Triggered when the value gets updated while scrolling the slider:
-  const handleInput = (e) => {
-    setValue(e.target.value);
+  const handleInput = (e: any) => {
+    setValue(e?.target?.value);
   };
   const hotels = [
     { name: "A", price: 40 },
@@ -148,26 +144,7 @@ const Users: NextPage = () => {
               </Checkbox>
             ))}
             <h3>Years of experience</h3>
-            {/* <input
-              type="range"
-              onInput={handleInput}
-              min={0}
-              max={15}
-              defaultValue={0}
-            /> */}
-            {/* <div>
-              {value
-                .filter((value: User) => {
-                  return value > parseInt(value, 10);
-                })
-                .map((experience: User) => {
-                  return (
-                    <p key={experience.experience.value}>
-                      {experience.experience.value}
-                    </p>
-                  );
-                })}
-            </div>*/}
+            
             <Slider
               size="medium"
               min={0}
@@ -179,19 +156,7 @@ const Users: NextPage = () => {
               }}
               onChange={handleInput}
             />
-            {/* <div>
-              {users
-                .filter((user) => {
-                  return user.experience.label > parseInt(label, 10);
-                })
-                .map((user) => {
-                  return (
-                    <p key={user.name}>
-                      {user.name} {user.experience.label} &euro;{" "}
-                    </p>
-                  );
-                })}
-            </div> */}
+           
           </Center>
         </Filter>
       </div>
@@ -200,6 +165,7 @@ const Users: NextPage = () => {
         {filteredList
           .filter((user) => {
             if (query === "") {
+      
               return user.location.value > parseInt(value, 10);
               return user;
             } else if (user.name.toLowerCase().includes(query.toLowerCase())) {
